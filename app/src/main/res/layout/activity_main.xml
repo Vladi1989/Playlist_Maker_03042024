@@ -4,15 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/main_cl_style"
     tools:context=".MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/playlist_maker_margin"
+        android:layout_marginStart="@dimen/playlist_maker_margin"
+        android:text="@string/playlist_maker"
+        android:textColor="@color/white"
+        android:textSize="@dimen/playlist_maker_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/buttons_margin_top"
+        android:layout_marginStart="@dimen/buttons_margin"
+        android:layout_marginEnd="@dimen/buttons_margin">
+
+     <androidx.cardview.widget.CardView
+
+         style="@style/card_view_style">
+
+         <TextView style="@style/card_text_view_style"
+             android:id="@+id/find"
+             android:text="@string/find"
+             android:drawableStart="@drawable/find"/>
+
+
+     </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            style="@style/card_view_style">
+
+            <TextView style="@style/card_text_view_style"
+                android:id="@+id/mediateka"
+                android:drawableStart="@drawable/mediateka"
+                android:text="@string/mediateka"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            style="@style/card_view_style">
+
+            <TextView style="@style/card_text_view_style"
+                android:id="@+id/setting"
+                android:text="@string/settings"
+                android:drawableStart="@drawable/settings"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

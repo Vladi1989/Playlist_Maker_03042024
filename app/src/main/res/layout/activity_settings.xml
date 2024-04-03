@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/settings_cl_style">
+
+    <ImageButton style="@style/settings_arrow"
+        android:id="@+id/buttonBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="24dp"
+        android:background="@drawable/arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView style="@style/settings_tv_style"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="@string/settings"
+        android:gravity="center"
+        android:textSize="@dimen/playlist_maker_size"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/buttons_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonBack"
+        app:layout_constraintStart_toEndOf="@+id/buttonBack"
+        app:layout_constraintTop_toTopOf="@+id/buttonBack" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/buttons_margin_top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout style="@style/settings_ll_style">
+
+            <TextView style="@style/settings_text_views_style"
+                android:text="@string/dark_theme"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="44dp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/settings_ll_style">
+
+            <TextView style="@style/settings_text_views_style"
+                android:text="@string/share"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView style="@style/settings_images_style"
+                android:id="@+id/btnShare"
+                android:background="@drawable/share"/>
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/settings_ll_style">
+
+            <TextView style="@style/settings_text_views_style"
+                android:text="@string/support"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView style="@style/settings_images_style"
+                android:id="@+id/btnSupport"
+                android:background="@drawable/support"/>
+        </LinearLayout>
+
+        <LinearLayout style="@style/settings_ll_style">
+
+            <TextView style="@style/settings_text_views_style"
+                android:text="@string/agrement"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView style="@style/settings_images_style"
+                android:id="@+id/btnUserAgreement"
+                android:background="@drawable/arrow_small" />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
