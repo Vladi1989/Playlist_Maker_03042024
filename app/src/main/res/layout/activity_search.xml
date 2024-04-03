@@ -45,8 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <EditText
-                style="@style/search_et"
+            <EditText style="@style/search_et"
                 android:id="@+id/editText"
                 android:layout_width="335dp"
                 android:layout_height="wrap_content"
@@ -79,6 +78,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTracks"
+        tools:itemCount="0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -116,13 +116,67 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ScrollView
+        android:id="@+id/clHistory"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="120dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="24dp">
+
+
+            <TextView
+                android:id="@+id/textView4"
+                style="@style/tv_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:gravity="center"
+                android:text="Вы искали"
+                android:textSize="27sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvHistory"
+                tools:listitem="@layout/track_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="3"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnClearHistory"
+                style="@style/btn_update"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Очистить историю"
+                android:paddingHorizontal="10dp"
+                android:textAllCaps="false"
+                android:layout_marginTop="36dp"
+                android:fontFamily="@font/ys_display_medium"
+                android:textSize="16sp"
+                android:background="@drawable/btn_clear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rvHistory" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clFailure"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        tools:visibility="visible">
+        android:visibility="gone">
 
         <ImageView style="@style/failure_style"
             android:id="@+id/imageView3"
@@ -174,5 +228,6 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

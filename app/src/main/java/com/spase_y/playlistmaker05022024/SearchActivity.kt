@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ScrollView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -34,11 +36,14 @@ class SearchActivity : AppCompatActivity() {
         }
     }
     val trackAdapter = TracksAdapter()
-
+    val savedTracksAdapter = TracksAdapter()
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+    val searchHistory by lazy {
+        SearchHistory(getSharedPreferences("History shared preference", Context.MODE_PRIVATE))
+    }
     val editText by lazy {
         findViewById<EditText>(R.id.editText)
     }
@@ -54,10 +59,24 @@ class SearchActivity : AppCompatActivity() {
     val btnUpdate by lazy {
         findViewById<AppCompatButton>(R.id.btnUpdate)
     }
+    val rvHistory by lazy {
+        findViewById<RecyclerView>(R.id.rvHistory)
+    }
+    val clHistory by lazy {
+        findViewById<ScrollView>(R.id.clHistory)
+    }
+    val btnClearHistory by lazy {
+        findViewById<AppCompatButton>(R.id.btnClearHistory)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
+        btnClearHistory.setOnClickListener {
+            searchHistory.deleteAllItems()
+            savedTracksAdapter.listTracks = arrayListOf<Track>()
+            savedTracksAdapter.notifyDataSetChanged()
+            clHistory.visibility = View.GONE
+        }
         arrowBack.setOnClickListener {
             finish()
         }
@@ -74,6 +93,8 @@ class SearchActivity : AppCompatActivity() {
         }
         val clear = findViewById<ImageView>(R.id.clear)
         clear.setOnClickListener {
+            trackAdapter.listTracks = arrayListOf()
+            trackAdapter.notifyDataSetChanged()
             editText.setText("")
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
@@ -89,8 +110,25 @@ class SearchActivity : AppCompatActivity() {
                     View.INVISIBLE
                 }
                 else View.VISIBLE
+                if(p0.toString().isNullOrEmpty() && searchHistory.getAllItems().isNotEmpty()){
+                    clHistory.visibility = View.VISIBLE
+                }
+                else{
+                    clHistory.visibility = View.GONE
+                }
             }
         })
+
+        if (editText.text.isEmpty() && searchHistory.getAllItems().isNotEmpty()){
+            clHistory.visibility = View.VISIBLE
+            rvHistory.layoutManager = LinearLayoutManager(this)
+            savedTracksAdapter.listTracks = searchHistory.getAllItems() as ArrayList<Track>
+            rvHistory.adapter = savedTracksAdapter
+        }
+        else{
+            clHistory.visibility = View.GONE
+        }
+
         val rv = findViewById<RecyclerView>(R.id.rvTracks)
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = trackAdapter
