@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.spase_y.playlistmaker05022024.App
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.SearchHistory
 import com.spase_y.playlistmaker05022024.Track
@@ -25,7 +26,7 @@ class TracksAdapter:RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
             val ivLogo = itemView.findViewById<ImageView>(R.id.ivTrack)
             tvName.text = track.trackName
             tvNameArtists.text = track.artistName
-            val searchHistory = SearchHistory(itemView.context.getSharedPreferences("History shared preference", Context.MODE_PRIVATE))
+            val searchHistory = SearchHistory(itemView.context.getSharedPreferences(App.PREFS_TAG, Context.MODE_PRIVATE))
             itemView.setOnClickListener{
                 if (searchHistory.getAllItems().contains(track)){
                     searchHistory.deleteItem(track)

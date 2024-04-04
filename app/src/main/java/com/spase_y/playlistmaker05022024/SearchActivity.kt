@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.spase_y.playlistmaker05022024.App.Companion.PREFS_TAG
 import com.spase_y.playlistmaker05022024.adapter.TracksAdapter
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,7 +43,7 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val searchHistory by lazy {
-        SearchHistory(getSharedPreferences("History shared preference", Context.MODE_PRIVATE))
+        SearchHistory(getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE))
     }
     val editText by lazy {
         findViewById<EditText>(R.id.editText)
@@ -106,12 +107,17 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
             override fun afterTextChanged(p0: Editable?) {
-                clear.visibility = if (p0.toString().isNullOrEmpty()){
-                    View.INVISIBLE
+                if (p0.toString().isNullOrEmpty()){
+                    clear.visibility = View.INVISIBLE
+                    trackAdapter.listTracks = ArrayList()
+                    trackAdapter.notifyDataSetChanged()
                 }
-                else View.VISIBLE
+                else clear.visibility = View.VISIBLE
+
                 if(p0.toString().isNullOrEmpty() && searchHistory.getAllItems().isNotEmpty()){
                     clHistory.visibility = View.VISIBLE
+                    savedTracksAdapter.listTracks = ArrayList(searchHistory.getAllItems())
+                    savedTracksAdapter.notifyDataSetChanged()
                 }
                 else{
                     clHistory.visibility = View.GONE
@@ -134,6 +140,7 @@ class SearchActivity : AppCompatActivity() {
         rv.adapter = trackAdapter
     }
     fun makeRequest(){
+        if (editText.text.toString().isNullOrEmpty()) return
         val itunesApiService = retrofit.create<ItunesApiService>()
         itunesApiService.search(editText.text.toString()).enqueue(object:Callback<TracksList>{
             @SuppressLint("NotifyDataSetChanged")
