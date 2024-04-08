@@ -38,7 +38,12 @@ class TracksAdapter:RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
             }
 
             tvDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
-            Glide.with(itemView.context).load(track.artworkUrl100).fitCenter().error(R.drawable.placeholder).into(ivLogo)
+            Glide.with(itemView.context)
+                .load(track.artworkUrl100)
+                .fitCenter()
+                .error(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .into(ivLogo)
 
         }
     }
