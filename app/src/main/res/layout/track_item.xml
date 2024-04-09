@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="61dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="10dp"
+    android:padding="8dp"
     android:orientation="horizontal">
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="2dp"
-        android:layout_width="60dp"
-        android:layout_height="60dp">
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="5dp">
 
         <ImageView
             android:id="@+id/ivTrack"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_launcher_background"/>
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/placeholder"/>
 
     </androidx.cardview.widget.CardView>
 
@@ -24,7 +25,7 @@
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="8dp"
         android:orientation="vertical">
 
         <TextView
@@ -33,7 +34,7 @@
             android:lines="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
+            android:textSize="19sp"
             android:ellipsize="end"
             android:text="Yesterday (Remastered 2009)"
             android:fontFamily="@font/ys_display_regular"/>
@@ -48,38 +49,42 @@
                 android:id="@+id/tvNameArtist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="11sp"
                 android:text="The Beatle"
                 android:fontFamily="@font/ys_display_regular"/>
 
             <ImageView
                 style="@style/iv_image"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/img_dot"
                 />
 
 
             <TextView
-                style="@style/tv_text2"
                 android:id="@+id/tvDuration"
+                style="@style/tv_text2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                tools:text="2:55"
-                android:fontFamily="@font/ys_display_regular"/>
+                android:layout_height="match_parent"
+                android:fontFamily="@font/ys_display_regular"
+                android:textSize="11sp"
+                tools:text="2:55" />
 
         </LinearLayout>
 
 
     </LinearLayout>
-
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
     <ImageView
         style="@style/iv_image"
         android:id="@+id/ivDetails"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="12dp"
         android:layout_gravity="center_vertical"
         android:background="@drawable/img_details"
         />
