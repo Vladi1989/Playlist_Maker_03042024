@@ -2,6 +2,7 @@ package com.spase_y.playlistmaker05022024
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.text.Editable
@@ -93,6 +94,28 @@ class SearchActivity : AppCompatActivity() {
             false
         }
         val clear = findViewById<ImageView>(R.id.clear)
+        trackAdapter.onItemClick = {
+            val intent = Intent(this,PlayerActivity::class.java)
+            startActivity(intent)
+            if (searchHistory.getAllItems().contains(it)){
+                searchHistory.deleteItem(it)
+                searchHistory.addItem(it)
+            }
+            else if(searchHistory.getAllItems().size < 10){
+                searchHistory.addItem(it)
+            }
+        }
+        savedTracksAdapter.onItemClick = {
+            val intent = Intent(this,PlayerActivity::class.java)
+            startActivity(intent)
+            if (searchHistory.getAllItems().contains(it)){
+                searchHistory.deleteItem(it)
+                searchHistory.addItem(it)
+            }
+            else if(searchHistory.getAllItems().size < 10){
+                searchHistory.addItem(it)
+            }
+        }
         clear.setOnClickListener {
             trackAdapter.listTracks = arrayListOf()
             trackAdapter.notifyDataSetChanged()
