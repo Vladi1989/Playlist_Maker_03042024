@@ -96,6 +96,14 @@ class SearchActivity : AppCompatActivity() {
         val clear = findViewById<ImageView>(R.id.clear)
         trackAdapter.onItemClick = {
             val intent = Intent(this,PlayerActivity::class.java)
+            intent.putExtra("trackName",it.trackName)
+            intent.putExtra("artistName",it.artistName)
+            intent.putExtra("trackTimeMillis",it.trackTimeMillis)
+            intent.putExtra("artworkUrl100",it.artworkUrl100)
+            intent.putExtra("collectionName",it.collectionName)
+            intent.putExtra("releaseDate",it.releaseDate)
+            intent.putExtra("primaryGenreName",it.primaryGenreName)
+            intent.putExtra("country",it.country)
             startActivity(intent)
             if (searchHistory.getAllItems().contains(it)){
                 searchHistory.deleteItem(it)
@@ -107,6 +115,15 @@ class SearchActivity : AppCompatActivity() {
         }
         savedTracksAdapter.onItemClick = {
             val intent = Intent(this,PlayerActivity::class.java)
+            intent.putExtra("trackName",it.trackName)
+            intent.putExtra("artistName",it.artistName)
+            intent.putExtra("trackTimeMillis",it.trackTimeMillis)
+            intent.putExtra("artworkUrl100",it.artworkUrl100)
+            intent.putExtra("collectionName",it.collectionName)
+            intent.putExtra("releaseDate",it.releaseDate)
+            intent.putExtra("primaryGenreName",it.primaryGenreName)
+            intent.putExtra("country",it.country)
+
             startActivity(intent)
             if (searchHistory.getAllItems().contains(it)){
                 searchHistory.deleteItem(it)

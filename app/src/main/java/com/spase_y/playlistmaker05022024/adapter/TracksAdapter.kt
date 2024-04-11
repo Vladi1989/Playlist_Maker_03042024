@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.*
-import com.spase_y.playlistmaker05022024.PlayerActivity.Companion.currentTrackItem
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,8 +27,6 @@ class TracksAdapter:RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
             tvNameArtists.text = track.artistName
             itemView.setOnClickListener{
                 onItemClick.invoke(track)
-                currentTrackItem = track
-
             }
             tvDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
             Glide.with(itemView.context)
