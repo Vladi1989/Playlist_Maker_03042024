@@ -2,6 +2,7 @@ package com.spase_y.playlistmaker05022024
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.text.Editable
@@ -93,6 +94,45 @@ class SearchActivity : AppCompatActivity() {
             false
         }
         val clear = findViewById<ImageView>(R.id.clear)
+        trackAdapter.onItemClick = {
+            val intent = Intent(this,PlayerActivity::class.java)
+            intent.putExtra("trackName",it.trackName)
+            intent.putExtra("artistName",it.artistName)
+            intent.putExtra("trackTimeMillis",it.trackTimeMillis)
+            intent.putExtra("artworkUrl100",it.artworkUrl100)
+            intent.putExtra("collectionName",it.collectionName)
+            intent.putExtra("releaseDate",it.releaseDate)
+            intent.putExtra("primaryGenreName",it.primaryGenreName)
+            intent.putExtra("country",it.country)
+            startActivity(intent)
+            if (searchHistory.getAllItems().contains(it)){
+                searchHistory.deleteItem(it)
+                searchHistory.addItem(it)
+            }
+            else if(searchHistory.getAllItems().size < 10){
+                searchHistory.addItem(it)
+            }
+        }
+        savedTracksAdapter.onItemClick = {
+            val intent = Intent(this,PlayerActivity::class.java)
+            intent.putExtra("trackName",it.trackName)
+            intent.putExtra("artistName",it.artistName)
+            intent.putExtra("trackTimeMillis",it.trackTimeMillis)
+            intent.putExtra("artworkUrl100",it.artworkUrl100)
+            intent.putExtra("collectionName",it.collectionName)
+            intent.putExtra("releaseDate",it.releaseDate)
+            intent.putExtra("primaryGenreName",it.primaryGenreName)
+            intent.putExtra("country",it.country)
+
+            startActivity(intent)
+            if (searchHistory.getAllItems().contains(it)){
+                searchHistory.deleteItem(it)
+                searchHistory.addItem(it)
+            }
+            else if(searchHistory.getAllItems().size < 10){
+                searchHistory.addItem(it)
+            }
+        }
         clear.setOnClickListener {
             trackAdapter.listTracks = arrayListOf()
             trackAdapter.notifyDataSetChanged()
