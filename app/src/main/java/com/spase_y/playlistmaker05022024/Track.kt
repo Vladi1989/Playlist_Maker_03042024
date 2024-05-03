@@ -1,6 +1,7 @@
 package com.spase_y.playlistmaker05022024
 
 data class Track(
+    val previewUrl:String, 
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
@@ -9,6 +10,7 @@ data class Track(
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String
+
 )
 
 

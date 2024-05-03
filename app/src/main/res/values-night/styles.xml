@@ -101,5 +101,7 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="pb_search"></style>
+
 
 </resources>

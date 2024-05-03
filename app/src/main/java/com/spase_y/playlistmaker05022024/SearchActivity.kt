@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -37,8 +40,13 @@ class SearchActivity : AppCompatActivity() {
             editText.setText(savedInstanceState.getString(EDIT_TEXT_TAG,""))
         }
     }
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+
     val trackAdapter = TracksAdapter()
     val savedTracksAdapter = TracksAdapter()
+    private val searchRunnable = Runnable { makeRequest() }
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com")
         .addConverterFactory(GsonConverterFactory.create())
@@ -48,6 +56,9 @@ class SearchActivity : AppCompatActivity() {
     }
     val editText by lazy {
         findViewById<EditText>(R.id.editText)
+    }
+    val progressBar by lazy {
+        findViewById<ProgressBar>(R.id.pb)
     }
     val arrowBack by lazy {
         findViewById<ImageButton>(R.id.buttonBack)
@@ -86,51 +97,64 @@ class SearchActivity : AppCompatActivity() {
             noInternet.visibility = View.GONE
             makeRequest()
         }
-        editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                makeRequest()
-                true
+        editText.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
-            false
-        }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                searchDebounce()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+        })
         val clear = findViewById<ImageView>(R.id.clear)
         trackAdapter.onItemClick = {
-            val intent = Intent(this,PlayerActivity::class.java)
-            intent.putExtra("trackName",it.trackName)
-            intent.putExtra("artistName",it.artistName)
-            intent.putExtra("trackTimeMillis",it.trackTimeMillis)
-            intent.putExtra("artworkUrl100",it.artworkUrl100)
-            intent.putExtra("collectionName",it.collectionName)
-            intent.putExtra("releaseDate",it.releaseDate)
-            intent.putExtra("primaryGenreName",it.primaryGenreName)
-            intent.putExtra("country",it.country)
-            startActivity(intent)
-            if (searchHistory.getAllItems().contains(it)){
-                searchHistory.deleteItem(it)
-                searchHistory.addItem(it)
+            if(clickDebounce()){
+                val intent = Intent(this,PlayerActivity::class.java)
+                intent.putExtra("trackName",it.trackName)
+                intent.putExtra("previewUrl",it.previewUrl)
+                intent.putExtra("artistName",it.artistName)
+                intent.putExtra("trackTimeMillis",it.trackTimeMillis)
+                intent.putExtra("artworkUrl100",it.artworkUrl100)
+                intent.putExtra("collectionName",it.collectionName)
+                intent.putExtra("releaseDate",it.releaseDate)
+                intent.putExtra("primaryGenreName",it.primaryGenreName)
+                intent.putExtra("country",it.country)
+                startActivity(intent)
+                if (searchHistory.getAllItems().contains(it)){
+                    searchHistory.deleteItem(it)
+                    searchHistory.addItem(it)
+                }
+                else if(searchHistory.getAllItems().size < 10){
+                    searchHistory.addItem(it)
+                }
             }
-            else if(searchHistory.getAllItems().size < 10){
-                searchHistory.addItem(it)
-            }
-        }
-        savedTracksAdapter.onItemClick = {
-            val intent = Intent(this,PlayerActivity::class.java)
-            intent.putExtra("trackName",it.trackName)
-            intent.putExtra("artistName",it.artistName)
-            intent.putExtra("trackTimeMillis",it.trackTimeMillis)
-            intent.putExtra("artworkUrl100",it.artworkUrl100)
-            intent.putExtra("collectionName",it.collectionName)
-            intent.putExtra("releaseDate",it.releaseDate)
-            intent.putExtra("primaryGenreName",it.primaryGenreName)
-            intent.putExtra("country",it.country)
 
-            startActivity(intent)
-            if (searchHistory.getAllItems().contains(it)){
-                searchHistory.deleteItem(it)
-                searchHistory.addItem(it)
-            }
-            else if(searchHistory.getAllItems().size < 10){
-                searchHistory.addItem(it)
+        }
+
+        savedTracksAdapter.onItemClick = {
+            if(clickDebounce()){
+                val intent = Intent(this,PlayerActivity::class.java)
+                intent.putExtra("trackName",it.trackName)
+                intent.putExtra("previewUrl",it.previewUrl)
+                intent.putExtra("artistName",it.artistName)
+                intent.putExtra("trackTimeMillis",it.trackTimeMillis)
+                intent.putExtra("artworkUrl100",it.artworkUrl100)
+                intent.putExtra("collectionName",it.collectionName)
+                intent.putExtra("releaseDate",it.releaseDate)
+                intent.putExtra("primaryGenreName",it.primaryGenreName)
+                intent.putExtra("country",it.country)
+
+                startActivity(intent)
+                if (searchHistory.getAllItems().contains(it)){
+                    searchHistory.deleteItem(it)
+                    searchHistory.addItem(it)
+                }
+                else if(searchHistory.getAllItems().size < 10){
+                    searchHistory.addItem(it)
+                }
             }
         }
         clear.setOnClickListener {
@@ -181,6 +205,7 @@ class SearchActivity : AppCompatActivity() {
     }
     fun makeRequest(){
         if (editText.text.toString().isNullOrEmpty()) return
+        progressBar.visibility = View.VISIBLE
         val itunesApiService = retrofit.create<ItunesApiService>()
         itunesApiService.search(editText.text.toString()).enqueue(object:Callback<TracksList>{
             @SuppressLint("NotifyDataSetChanged")
@@ -188,6 +213,7 @@ class SearchActivity : AppCompatActivity() {
                 call: Call<TracksList>,
                 response: Response<TracksList>
             ) {
+                progressBar.visibility = View.GONE
                 val listTracks = response.body()
                 if (listTracks?.resultCount == 0){
                     clNotFound.visibility = View.VISIBLE
@@ -198,11 +224,25 @@ class SearchActivity : AppCompatActivity() {
             }
             @SuppressLint("NotifyDataSetChanged")
             override fun onFailure(call: Call<TracksList>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 noInternet.visibility = View.VISIBLE
                 trackAdapter.listTracks = ArrayList()
                 trackAdapter.notifyDataSetChanged()
             }
         })
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -210,6 +250,14 @@ class SearchActivity : AppCompatActivity() {
     }
     companion object{
         const val EDIT_TEXT_TAG = "Edit text outstate"
+        private const val CLICK_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+
     }
 }
+
+
+
+
+
 

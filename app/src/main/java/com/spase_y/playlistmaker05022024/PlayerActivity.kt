@@ -1,19 +1,34 @@
 package com.spase_y.playlistmaker05022024
 
 import android.content.Context
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.*
 
 class PlayerActivity : AppCompatActivity() {
+    private lateinit var mdPlayer: MediaPlayer
+    private lateinit var ibPlay: ImageButton
+    val trackDuration by lazy {
+        mdPlayer.duration
+    }
+    var timer = 0
+    val handler = Handler(Looper.getMainLooper()!!)
+    var isPause = 0
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
@@ -22,6 +37,7 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
         val trackName = intent.getStringExtra("trackName").toString()
+        val previewUrl = intent.getStringExtra("previewUrl").toString()
         val artistName = intent.getStringExtra("artistName").toString()
         val trackTimeMillis = intent.getLongExtra("trackTimeMillis",0L)
         val artworkUrl100 = intent.getStringExtra("artworkUrl100").toString()
@@ -30,8 +46,11 @@ class PlayerActivity : AppCompatActivity() {
         val primaryGenreName = intent.getStringExtra("primaryGenreName").toString()
         val country = intent.getStringExtra("country").toString()
 
-        val currentTrackItem = Track(trackName,artistName,trackTimeMillis,artworkUrl100,collectionName,
+        val currentTrackItem = Track(previewUrl,trackName,artistName,trackTimeMillis,artworkUrl100,collectionName,
         releaseDate,primaryGenreName,country)
+        ibPlay = findViewById<ImageButton>(R.id.ibPlay)
+
+        val tvCurrentTime = findViewById<TextView>(R.id.tvCurrentTime)
         val ivIcon = findViewById<ImageView>(R.id.ivIcon)
         val tvName = findViewById<TextView>(R.id.tvName)
         val tvArtist = findViewById<TextView>(R.id.tvArtistName)
@@ -44,6 +63,7 @@ class PlayerActivity : AppCompatActivity() {
         val llYear = findViewById<LinearLayout>(R.id.llYear)
         val llGenre = findViewById<LinearLayout>(R.id.llGenre)
         val llCountry = findViewById<LinearLayout>(R.id.llCountry)
+        mdPlayer = MediaPlayer.create(this, Uri.parse(previewUrl))
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
         tvDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTrackItem!!.trackTimeMillis)
@@ -79,5 +99,49 @@ class PlayerActivity : AppCompatActivity() {
             tvCountry.text = currentTrackItem.country
 
         }
+        ibPlay.setOnClickListener {
+            if(isPause == 0){
+                mdPlayer.start()
+                ibPlay.setBackgroundResource(R.drawable.pause)
+                isPause = 1
+                var iter = 1
+                for (i in timer/1000 downTo 1) {
+                    handler.postDelayed({
+                        timer -= 1000
+                        tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(timer)
+
+                    }, (1000 * iter++).toLong())
+                }
+            }
+            else {
+                mdPlayer.pause()
+                ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+                isPause = 0
+                handler.removeCallbacksAndMessages(null)
+
+            }
+        }
+        mdPlayer.setOnCompletionListener {
+            mdPlayer.pause()
+            isPause = 0
+            timer = trackDuration
+            ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+        }
+        tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackDuration)
+        timer = trackDuration
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacksAndMessages(null)
+        mdPlayer.pause()
+        isPause = 0
+        ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mdPlayer.release()
+        handler.removeCallbacksAndMessages(null)
     }
 }
