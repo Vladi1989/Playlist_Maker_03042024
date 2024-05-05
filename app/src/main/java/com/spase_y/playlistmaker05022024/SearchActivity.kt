@@ -9,6 +9,7 @@ import android.os.Looper
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -204,7 +205,15 @@ class SearchActivity : AppCompatActivity() {
         rv.adapter = trackAdapter
     }
     fun makeRequest(){
-        if (editText.text.toString().isNullOrEmpty()) return
+        if (editText.text.toString().isNullOrEmpty()) {
+            clNotFound.visibility = View.GONE
+            noInternet.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            return
+        }
+
+        trackAdapter.listTracks = ArrayList()
+        trackAdapter.notifyDataSetChanged()
         progressBar.visibility = View.VISIBLE
         val itunesApiService = retrofit.create<ItunesApiService>()
         itunesApiService.search(editText.text.toString()).enqueue(object:Callback<TracksList>{
@@ -214,13 +223,16 @@ class SearchActivity : AppCompatActivity() {
                 response: Response<TracksList>
             ) {
                 progressBar.visibility = View.GONE
+                noInternet.visibility = View.GONE
                 val listTracks = response.body()
-                if (listTracks?.resultCount == 0){
+                if (listTracks?.resultCount == 0 || listTracks == null){
                     clNotFound.visibility = View.VISIBLE
                 }
-                else clNotFound.visibility = View.GONE
-                trackAdapter.listTracks = ArrayList(listTracks?.results)
-                trackAdapter.notifyDataSetChanged()
+                else {
+                    clNotFound.visibility = View.GONE
+                    trackAdapter.listTracks = ArrayList(listTracks?.results)
+                    trackAdapter.notifyDataSetChanged()
+                }
             }
             @SuppressLint("NotifyDataSetChanged")
             override fun onFailure(call: Call<TracksList>, t: Throwable) {
@@ -253,6 +265,11 @@ class SearchActivity : AppCompatActivity() {
         private const val CLICK_DEBOUNCE_DELAY = 2000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 }
 

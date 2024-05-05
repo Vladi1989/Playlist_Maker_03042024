@@ -24,9 +24,11 @@ class PlayerActivity : AppCompatActivity() {
     val trackDuration by lazy {
         mdPlayer.duration
     }
-    var timer = 0
     val handler = Handler(Looper.getMainLooper()!!)
     var isPause = 0
+    val tvCurrentTime by lazy {
+        findViewById<TextView>(R.id.tvCurrentTime)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +52,6 @@ class PlayerActivity : AppCompatActivity() {
         releaseDate,primaryGenreName,country)
         ibPlay = findViewById<ImageButton>(R.id.ibPlay)
 
-        val tvCurrentTime = findViewById<TextView>(R.id.tvCurrentTime)
         val ivIcon = findViewById<ImageView>(R.id.ivIcon)
         val tvName = findViewById<TextView>(R.id.tvName)
         val tvArtist = findViewById<TextView>(R.id.tvArtistName)
@@ -104,31 +105,39 @@ class PlayerActivity : AppCompatActivity() {
                 mdPlayer.start()
                 ibPlay.setBackgroundResource(R.drawable.pause)
                 isPause = 1
-                var iter = 1
-                for (i in timer/1000 downTo 1) {
-                    handler.postDelayed({
-                        timer -= 1000
-                        tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(timer)
-
-                    }, (1000 * iter++).toLong())
-                }
+                handler.post(timerRunneble)
             }
             else {
                 mdPlayer.pause()
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
                 isPause = 0
                 handler.removeCallbacksAndMessages(null)
-
             }
         }
         mdPlayer.setOnCompletionListener {
             mdPlayer.pause()
             isPause = 0
-            timer = trackDuration
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
         }
         tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackDuration)
-        timer = trackDuration
+    }
+    val timerRunneble = object: Runnable {
+
+        override fun run() {
+            val currentPosition = roundToNearestThousand(mdPlayer.currentPosition)
+            Log.d("TAG",currentPosition.toString())
+            tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+            handler.postDelayed(this,100)
+        }
+
+    }
+    fun roundToNearestThousand(milliseconds: Int): Int {
+        val remainder = milliseconds % 1000
+        return if (remainder < 500) {
+            milliseconds - remainder
+        } else {
+            milliseconds + (1000 - remainder)
+        }
     }
 
     override fun onPause() {
