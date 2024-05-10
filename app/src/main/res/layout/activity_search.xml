@@ -7,6 +7,17 @@
     style="@style/settings_cl_style"
     tools:context=".SearchActivity">
 
+    <ProgressBar
+        android:indeterminateTint="#3772E7"
+        android:visibility="gone"
+        android:id="@+id/pb"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rvTracks"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
     <ImageButton style="@style/settings_arrow"
         android:id="@+id/buttonBack"
         android:layout_width="24dp"
