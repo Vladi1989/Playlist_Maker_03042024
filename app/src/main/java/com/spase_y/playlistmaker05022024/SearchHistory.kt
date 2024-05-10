@@ -1,9 +1,9 @@
 package com.spase_y.playlistmaker05022024
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.spase_y.playlistmaker05022024.domain.models.Track
 
 class SearchHistory(val sharedPreferences: SharedPreferences) {
     private val gson = Gson()

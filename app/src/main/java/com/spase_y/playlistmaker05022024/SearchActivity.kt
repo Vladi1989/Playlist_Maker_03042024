@@ -9,16 +9,13 @@ import android.os.Looper
 import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.ScrollView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -26,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spase_y.playlistmaker05022024.App.Companion.PREFS_TAG
 import com.spase_y.playlistmaker05022024.adapter.TracksAdapter
+import com.spase_y.playlistmaker05022024.domain.models.Track
+import com.spase_y.playlistmaker05022024.presentation.PlayerActivity
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -113,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
         val clear = findViewById<ImageView>(R.id.clear)
         trackAdapter.onItemClick = {
             if(clickDebounce()){
-                val intent = Intent(this,PlayerActivity::class.java)
+                val intent = Intent(this, PlayerActivity::class.java)
                 intent.putExtra("trackName",it.trackName)
                 intent.putExtra("previewUrl",it.previewUrl)
                 intent.putExtra("artistName",it.artistName)
@@ -137,7 +136,7 @@ class SearchActivity : AppCompatActivity() {
 
         savedTracksAdapter.onItemClick = {
             if(clickDebounce()){
-                val intent = Intent(this,PlayerActivity::class.java)
+                val intent = Intent(this, PlayerActivity::class.java)
                 intent.putExtra("trackName",it.trackName)
                 intent.putExtra("previewUrl",it.previewUrl)
                 intent.putExtra("artistName",it.artistName)

@@ -1,20 +1,21 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.presentation
 
-import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
+import com.spase_y.playlistmaker05022024.Creator
+import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,13 +23,14 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var mdPlayer: MediaPlayer
     private lateinit var ibPlay: ImageButton
     val trackDuration by lazy {
-        mdPlayer.duration
+        mdPlayer.duration.toLong()
     }
     val handler = Handler(Looper.getMainLooper()!!)
     var isPause = 0
     val tvCurrentTime by lazy {
         findViewById<TextView>(R.id.tvCurrentTime)
     }
+    val playerInteractor = Creator.getPlayerInteractorImpl()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +53,6 @@ class PlayerActivity : AppCompatActivity() {
         val currentTrackItem = Track(previewUrl,trackName,artistName,trackTimeMillis,artworkUrl100,collectionName,
         releaseDate,primaryGenreName,country)
         ibPlay = findViewById<ImageButton>(R.id.ibPlay)
-
         val ivIcon = findViewById<ImageView>(R.id.ivIcon)
         val tvName = findViewById<TextView>(R.id.tvName)
         val tvArtist = findViewById<TextView>(R.id.tvArtistName)
@@ -67,19 +68,14 @@ class PlayerActivity : AppCompatActivity() {
         mdPlayer = MediaPlayer.create(this, Uri.parse(previewUrl))
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
-        tvDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentTrackItem!!.trackTimeMillis)
-        val big = currentTrackItem.artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
-        Glide.with(this)
-            .load(big)
-            .error(R.drawable.placeholder)
-            .placeholder(R.drawable.placeholder)
-            .into(ivIcon)
-
+        tvDuration.text = playerInteractor.formatText(currentTrackItem.trackTimeMillis)
+        val big = playerInteractor.formatUrlImage(currentTrackItem.artworkUrl100)
+        playerInteractor.loadGlideImage(big, Glide.with(this),ivIcon)
         if (currentTrackItem.releaseDate.isNullOrEmpty()){
             llYear.visibility = View.GONE
         }
         else{
-            tvYear.text = currentTrackItem.releaseDate.replaceAfter("-","").replace("-","")
+            tvYear.text = playerInteractor.formatYear(currentTrackItem.releaseDate)
         }
         if (currentTrackItem.collectionName.isNullOrEmpty()){
            llAlbom.visibility = View.GONE
@@ -119,27 +115,16 @@ class PlayerActivity : AppCompatActivity() {
             isPause = 0
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
         }
-        tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackDuration)
+        tvCurrentTime.text = playerInteractor.formatText(trackDuration)
     }
     val timerRunneble = object: Runnable {
 
         override fun run() {
-            val currentPosition = roundToNearestThousand(mdPlayer.currentPosition)
-            Log.d("TAG",currentPosition.toString())
-            tvCurrentTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+            val currentPosition = playerInteractor.roundToNearestThousand(mdPlayer.currentPosition).toLong()
+            tvCurrentTime.text = playerInteractor.formatText(currentPosition)
             handler.postDelayed(this,100)
         }
-
     }
-    fun roundToNearestThousand(milliseconds: Int): Int {
-        val remainder = milliseconds % 1000
-        return if (remainder < 500) {
-            milliseconds - remainder
-        } else {
-            milliseconds + (1000 - remainder)
-        }
-    }
-
     override fun onPause() {
         super.onPause()
         handler.removeCallbacksAndMessages(null)
