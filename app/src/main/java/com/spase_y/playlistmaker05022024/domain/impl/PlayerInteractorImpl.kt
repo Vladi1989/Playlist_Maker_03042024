@@ -1,5 +1,6 @@
 package com.spase_y.playlistmaker05022024.domain.impl
 
+import android.media.MediaPlayer
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -9,13 +10,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class PlayerInteractorImpl: PlayerInteractor {
-    override fun loadGlideImage(big: String, glide: RequestManager, ivIcon: ImageView) {
-        glide
-            .load(big)
-            .error(R.drawable.placeholder)
-            .placeholder(R.drawable.placeholder)
-            .into(ivIcon)
-    }
 
     override fun formatText(long: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(long)
@@ -36,5 +30,22 @@ class PlayerInteractorImpl: PlayerInteractor {
             milliseconds + (1000 - remainder)
         }
     }
+
+    override fun mdPlayerStart(mediaPlayer: MediaPlayer) {
+        mediaPlayer.start()
+        isPause = false
+    }
+
+    override fun mdPlayerPause(mediaPlayer: MediaPlayer) {
+        mediaPlayer.pause()
+        isPause = true
+    }
+
+    override fun mdPlayerRelease(mediaPlayer: MediaPlayer) {
+        mediaPlayer.release()
+        isPause = true
+    }
+
+    override var isPause: Boolean = true
 
 }

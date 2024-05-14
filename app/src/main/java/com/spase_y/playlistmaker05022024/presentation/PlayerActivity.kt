@@ -26,7 +26,6 @@ class PlayerActivity : AppCompatActivity() {
         mdPlayer.duration.toLong()
     }
     val handler = Handler(Looper.getMainLooper()!!)
-    var isPause = 0
     val tvCurrentTime by lazy {
         findViewById<TextView>(R.id.tvCurrentTime)
     }
@@ -70,7 +69,11 @@ class PlayerActivity : AppCompatActivity() {
         tvArtist.text = currentTrackItem.artistName
         tvDuration.text = playerInteractor.formatText(currentTrackItem.trackTimeMillis)
         val big = playerInteractor.formatUrlImage(currentTrackItem.artworkUrl100)
-        playerInteractor.loadGlideImage(big, Glide.with(this),ivIcon)
+        Glide.with(this)
+            .load(big)
+            .error(R.drawable.placeholder)
+            .placeholder(R.drawable.placeholder)
+            .into(ivIcon)
         if (currentTrackItem.releaseDate.isNullOrEmpty()){
             llYear.visibility = View.GONE
         }
@@ -97,22 +100,19 @@ class PlayerActivity : AppCompatActivity() {
 
         }
         ibPlay.setOnClickListener {
-            if(isPause == 0){
-                mdPlayer.start()
+            if(playerInteractor.isPause){
+                playerInteractor.mdPlayerStart(mdPlayer)
                 ibPlay.setBackgroundResource(R.drawable.pause)
-                isPause = 1
                 handler.post(timerRunneble)
             }
             else {
-                mdPlayer.pause()
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
-                isPause = 0
+                playerInteractor.mdPlayerPause(mdPlayer)
                 handler.removeCallbacksAndMessages(null)
             }
         }
         mdPlayer.setOnCompletionListener {
-            mdPlayer.pause()
-            isPause = 0
+            playerInteractor.mdPlayerPause(mdPlayer)
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
         }
         tvCurrentTime.text = playerInteractor.formatText(trackDuration)
@@ -128,14 +128,13 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         handler.removeCallbacksAndMessages(null)
-        mdPlayer.pause()
-        isPause = 0
+        playerInteractor.mdPlayerPause(mdPlayer)
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mdPlayer.release()
+        playerInteractor.mdPlayerRelease(mdPlayer)
         handler.removeCallbacksAndMessages(null)
     }
 }
