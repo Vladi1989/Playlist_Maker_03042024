@@ -12,12 +12,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import com.spase_y.playlistmaker05022024.Creator
 import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.domain.api.PlayerRepository
 import com.spase_y.playlistmaker05022024.domain.models.Track
-import java.text.SimpleDateFormat
-import java.util.*
 
 class PlayerActivity : AppCompatActivity() {
     private lateinit var mdPlayer: MediaPlayer
@@ -29,7 +27,8 @@ class PlayerActivity : AppCompatActivity() {
     val tvCurrentTime by lazy {
         findViewById<TextView>(R.id.tvCurrentTime)
     }
-    val playerInteractor = Creator.getPlayerInteractorImpl()
+    lateinit var playerRepository: PlayerRepository
+    val formaterInteractor = Creator.getFormaterInteractorImpl()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,13 +41,13 @@ class PlayerActivity : AppCompatActivity() {
         val trackName = intent.getStringExtra("trackName").toString()
         val previewUrl = intent.getStringExtra("previewUrl").toString()
         val artistName = intent.getStringExtra("artistName").toString()
-        val trackTimeMillis = intent.getLongExtra("trackTimeMillis",0L)
+        val trackTimeMillis = intent.getLongExtra("trackTimeMillis", 0L)
         val artworkUrl100 = intent.getStringExtra("artworkUrl100").toString()
         val collectionName = intent.getStringExtra("collectionName").toString()
         val releaseDate = intent.getStringExtra("releaseDate").toString()
         val primaryGenreName = intent.getStringExtra("primaryGenreName").toString()
         val country = intent.getStringExtra("country").toString()
-
+        playerRepository = Creator.getPlayerRepositoryImpl(this, previewUrl)
         val currentTrackItem = Track(previewUrl,trackName,artistName,trackTimeMillis,artworkUrl100,collectionName,
         releaseDate,primaryGenreName,country)
         ibPlay = findViewById<ImageButton>(R.id.ibPlay)
@@ -67,74 +66,72 @@ class PlayerActivity : AppCompatActivity() {
         mdPlayer = MediaPlayer.create(this, Uri.parse(previewUrl))
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
-        tvDuration.text = playerInteractor.formatText(currentTrackItem.trackTimeMillis)
-        val big = playerInteractor.formatUrlImage(currentTrackItem.artworkUrl100)
+        tvDuration.text = formaterInteractor.formatText(currentTrackItem.trackTimeMillis)
+        val big = formaterInteractor.formatUrlImage(currentTrackItem.artworkUrl100)
         Glide.with(this)
             .load(big)
             .error(R.drawable.placeholder)
             .placeholder(R.drawable.placeholder)
             .into(ivIcon)
-        if (currentTrackItem.releaseDate.isNullOrEmpty()){
+        if (currentTrackItem.releaseDate.isNullOrEmpty()) {
             llYear.visibility = View.GONE
+        } else {
+            tvYear.text = formaterInteractor.formatYear(currentTrackItem.releaseDate)
         }
-        else{
-            tvYear.text = playerInteractor.formatYear(currentTrackItem.releaseDate)
-        }
-        if (currentTrackItem.collectionName.isNullOrEmpty()){
-           llAlbom.visibility = View.GONE
-        }
-        else{
+        if (currentTrackItem.collectionName.isNullOrEmpty()) {
+            llAlbom.visibility = View.GONE
+        } else {
             tvAlbomName.text = currentTrackItem.collectionName
         }
-        if(currentTrackItem.primaryGenreName.isNullOrEmpty()) {
+        if (currentTrackItem.primaryGenreName.isNullOrEmpty()) {
             llGenre.visibility = View.GONE
-        }
-        else {
+        } else {
             tvGenre.text = currentTrackItem.primaryGenreName
         }
-        if (currentTrackItem.country.isNullOrEmpty()){
+        if (currentTrackItem.country.isNullOrEmpty()) {
             llCountry.visibility = View.GONE
-        }
-        else {
+        } else {
             tvCountry.text = currentTrackItem.country
 
         }
         ibPlay.setOnClickListener {
-            if(playerInteractor.isPause){
-                playerInteractor.mdPlayerStart(mdPlayer)
+            if (playerRepository.isPause) {
+                playerRepository.mdPlayerStart()
                 ibPlay.setBackgroundResource(R.drawable.pause)
                 handler.post(timerRunneble)
-            }
-            else {
+            } else {
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
-                playerInteractor.mdPlayerPause(mdPlayer)
+                playerRepository.mdPlayerPause()
                 handler.removeCallbacksAndMessages(null)
             }
         }
         mdPlayer.setOnCompletionListener {
-            playerInteractor.mdPlayerPause(mdPlayer)
+            playerRepository.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
         }
-        tvCurrentTime.text = playerInteractor.formatText(trackDuration)
+        tvCurrentTime.text = formaterInteractor.formatText(trackDuration)
     }
-    val timerRunneble = object: Runnable {
+
+    val timerRunneble = object : Runnable {
 
         override fun run() {
-            val currentPosition = playerInteractor.roundToNearestThousand(mdPlayer.currentPosition).toLong()
-            tvCurrentTime.text = playerInteractor.formatText(currentPosition)
-            handler.postDelayed(this,100)
+            val currentPosition =
+                formaterInteractor.roundToNearestThousand(mdPlayer.currentPosition).toLong()
+            tvCurrentTime.text = formaterInteractor.formatText(currentPosition)
+            handler.postDelayed(this, 100)
         }
     }
+
     override fun onPause() {
         super.onPause()
         handler.removeCallbacksAndMessages(null)
-        playerInteractor.mdPlayerPause(mdPlayer)
+        playerRepository.mdPlayerPause()
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        playerInteractor.mdPlayerRelease(mdPlayer)
+        playerRepository.mdPlayerRelease()
         handler.removeCallbacksAndMessages(null)
     }
 }
