@@ -1,8 +1,7 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.utils
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {

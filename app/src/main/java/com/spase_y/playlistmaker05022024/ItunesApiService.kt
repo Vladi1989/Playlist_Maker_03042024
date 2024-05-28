@@ -1,5 +1,6 @@
 package com.spase_y.playlistmaker05022024
 
+import com.spase_y.playlistmaker05022024.domain.models.TracksList
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

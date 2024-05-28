@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024.presentation
+package com.spase_y.playlistmaker05022024.ui
 
 import android.media.MediaPlayer
 import android.net.Uri
@@ -12,9 +12,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.spase_y.playlistmaker05022024.Creator
+import com.spase_y.playlistmaker05022024.utils.Creator
 import com.spase_y.playlistmaker05022024.R
-import com.spase_y.playlistmaker05022024.domain.api.PlayerRepository
+import com.spase_y.playlistmaker05022024.domain.api.PlayerInteractor
 import com.spase_y.playlistmaker05022024.domain.models.Track
 
 class PlayerActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class PlayerActivity : AppCompatActivity() {
     val tvCurrentTime by lazy {
         findViewById<TextView>(R.id.tvCurrentTime)
     }
-    lateinit var playerRepository: PlayerRepository
+    lateinit var playerInteractor: PlayerInteractor
     val formaterInteractor = Creator.getFormaterInteractorImpl()
 
 
@@ -47,7 +47,7 @@ class PlayerActivity : AppCompatActivity() {
         val releaseDate = intent.getStringExtra("releaseDate").toString()
         val primaryGenreName = intent.getStringExtra("primaryGenreName").toString()
         val country = intent.getStringExtra("country").toString()
-        playerRepository = Creator.getPlayerRepositoryImpl(this, previewUrl)
+        playerInteractor = Creator.providePlayerInteractor(this, previewUrl)
         val currentTrackItem = Track(previewUrl,trackName,artistName,trackTimeMillis,artworkUrl100,collectionName,
         releaseDate,primaryGenreName,country)
         ibPlay = findViewById<ImageButton>(R.id.ibPlay)
@@ -95,18 +95,18 @@ class PlayerActivity : AppCompatActivity() {
 
         }
         ibPlay.setOnClickListener {
-            if (playerRepository.isPause) {
-                playerRepository.mdPlayerStart()
+            if (playerInteractor.getIsPause()) {
+                playerInteractor.mdPlayerStart()
                 ibPlay.setBackgroundResource(R.drawable.pause)
                 handler.post(timerRunneble)
             } else {
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
-                playerRepository.mdPlayerPause()
+                playerInteractor.mdPlayerPause()
                 handler.removeCallbacksAndMessages(null)
             }
         }
         mdPlayer.setOnCompletionListener {
-            playerRepository.mdPlayerPause()
+            playerInteractor.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
         }
         tvCurrentTime.text = formaterInteractor.formatText(trackDuration)
@@ -125,13 +125,13 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         handler.removeCallbacksAndMessages(null)
-        playerRepository.mdPlayerPause()
+        playerInteractor.mdPlayerPause()
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        playerRepository.mdPlayerRelease()
+        playerInteractor.mdPlayerRelease()
         handler.removeCallbacksAndMessages(null)
     }
 }

@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ImageView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.spase_y.playlistmaker05022024.utils.App
+import com.spase_y.playlistmaker05022024.R
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

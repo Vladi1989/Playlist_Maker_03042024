@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024.adapter
+package com.spase_y.playlistmaker05022024.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View

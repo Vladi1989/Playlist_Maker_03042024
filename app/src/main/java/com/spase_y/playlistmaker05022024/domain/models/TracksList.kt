@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.domain.models
 
 import com.spase_y.playlistmaker05022024.domain.models.Track
 

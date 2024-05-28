@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,10 +21,13 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.spase_y.playlistmaker05022024.App.Companion.PREFS_TAG
-import com.spase_y.playlistmaker05022024.adapter.TracksAdapter
+import com.spase_y.playlistmaker05022024.utils.App.Companion.PREFS_TAG
+import com.spase_y.playlistmaker05022024.ItunesApiService
+import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.SearchHistory
+import com.spase_y.playlistmaker05022024.domain.models.TracksList
+import com.spase_y.playlistmaker05022024.ui.adapter.TracksAdapter
 import com.spase_y.playlistmaker05022024.domain.models.Track
-import com.spase_y.playlistmaker05022024.presentation.PlayerActivity
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -52,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val searchHistory by lazy {
-        SearchHistory(getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE))
+        SearchHistory(getSharedPreferences(PREFS_TAG, MODE_PRIVATE))
     }
     val editText by lazy {
         findViewById<EditText>(R.id.editText)
