@@ -1,8 +1,7 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.utils
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
@@ -11,9 +10,10 @@ class App : Application() {
     private val sharedPreferences by lazy {
         getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE)
     }
+
     override fun onCreate() {
         super.onCreate()
-        darkTheme = sharedPreferences.getBoolean(DARK_THEME_TAG,false)
+        darkTheme = sharedPreferences.getBoolean(DARK_THEME_TAG, false)
         switchTheme(darkTheme)
     }
 
@@ -28,7 +28,8 @@ class App : Application() {
             }
         )
     }
-    companion object{
+
+    companion object {
         const val PREFS_TAG = "Prefs"
         const val DARK_THEME_TAG = "Dark Theme"
     }

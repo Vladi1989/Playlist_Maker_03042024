@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024
+package com.spase_y.playlistmaker05022024.domain.models
 
 data class Track(
     val previewUrl:String, 
@@ -10,7 +10,6 @@ data class Track(
     val releaseDate: String,
     val primaryGenreName: String,
     val country: String
-
 )
 
 
