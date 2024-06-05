@@ -208,13 +208,18 @@ class SearchActivity : AppCompatActivity() {
 
     }
     fun showHistory(tracksList: List<Track>){
-
         clNotFound.visibility = View.GONE
         noInternet.visibility = View.GONE
         progressBar.visibility = View.GONE
-        historyTrackAdapter.listTracks = ArrayList(tracksList)
-        historyTrackAdapter.notifyDataSetChanged()
-        clHistory.visibility = View.VISIBLE
+        if (tracksList.isEmpty()){
+            clHistory.visibility = View.GONE
+        }
+        else {
+            historyTrackAdapter.listTracks = ArrayList(tracksList)
+            historyTrackAdapter.notifyDataSetChanged()
+            clHistory.visibility = View.VISIBLE
+        }
+
     }
     private fun showLoading() {
         clNotFound.visibility = View.GONE

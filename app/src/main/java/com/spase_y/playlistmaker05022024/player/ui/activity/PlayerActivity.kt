@@ -99,7 +99,7 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
         }
-        tvCurrentTime.text = viewModel.formatText(viewModel.getDuration())
+        tvCurrentTime.text = "00:00"
     }
     val timerRunneble = object : Runnable {
 
