@@ -1,25 +1,20 @@
 package com.spase_y.playlistmaker05022024.settings.ui.activity
 
-import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.widget.ImageView
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.spase_y.playlistmaker05022024.utils.App
 import com.spase_y.playlistmaker05022024.R
-import com.spase_y.playlistmaker05022024.creator.Creator
-import com.spase_y.playlistmaker05022024.settings.domain.model.ThemeSettings
 import com.spase_y.playlistmaker05022024.settings.ui.view_model.SettingsViewModel
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
         val backFromSetting = findViewById<ImageButton>(R.id.buttonBack)
         backFromSetting.setOnClickListener {
             finish()

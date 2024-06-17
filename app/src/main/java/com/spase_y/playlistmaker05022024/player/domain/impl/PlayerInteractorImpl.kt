@@ -32,4 +32,8 @@ class PlayerInteractorImpl(val repository: PlayerRepository): PlayerInteractor {
         repository.setOnCompleteListener(callback)
     }
 
+    override fun provideUrl(url: String) {
+        repository.provideUrl(url)
+    }
+
 }

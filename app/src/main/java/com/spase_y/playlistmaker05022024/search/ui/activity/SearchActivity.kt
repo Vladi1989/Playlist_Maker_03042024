@@ -14,9 +14,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spase_y.playlistmaker05022024.R
@@ -28,7 +28,7 @@ import com.spase_y.playlistmaker05022024.search.ui.view_model.SearchViewModel
 
 
 class SearchActivity : AppCompatActivity() {
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
     override fun onRestoreInstanceState(
         savedInstanceState: Bundle?,
         persistentState: PersistableBundle?
@@ -73,7 +73,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
         viewModel.getScreenStateLD().observe(this){
             when (it){
                 is TrackScreenState.Loading -> {
