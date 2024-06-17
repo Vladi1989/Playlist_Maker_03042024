@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/settings_cl_style"
-    tools:context=".ui.SearchActivity">
+    tools:context=".search.ui.activity.SearchActivity">
 
     <ProgressBar
         android:indeterminateTint="#3772E7"
@@ -171,6 +171,7 @@
                 android:layout_width="148dp"
                 android:layout_height="36dp"
                 android:text="Очистить историю"
+                android:maxLines="1"
                 android:paddingHorizontal="10dp"
                 android:textAllCaps="false"
                 android:layout_marginTop="24dp"
