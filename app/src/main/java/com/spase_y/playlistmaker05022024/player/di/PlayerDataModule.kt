@@ -1,5 +1,6 @@
 package com.spase_y.playlistmaker05022024.player.di
 
+import android.media.MediaPlayer
 import com.spase_y.playlistmaker05022024.player.domain.api.FormaterInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerInteractor
 import com.spase_y.playlistmaker05022024.player.domain.impl.FormaterInteractorImpl
@@ -12,5 +13,8 @@ val playerDataModule = module {
     }
     single<FormaterInteractor> {
         FormaterInteractorImpl()
+    }
+    single<MediaPlayer> {
+        MediaPlayer()
     }
 }

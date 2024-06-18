@@ -7,6 +7,6 @@ import org.koin.dsl.module
 
 val playerRepositoryModule = module {
     single<PlayerRepository>{
-        PlayerRepositoryImpl(androidContext())
+        PlayerRepositoryImpl(get())
     }
 }

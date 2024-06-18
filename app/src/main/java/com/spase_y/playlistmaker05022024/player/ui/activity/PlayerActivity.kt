@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
@@ -100,8 +102,11 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
         viewModel.setOnCompleteListener{
+            handler.removeCallbacks(timerRunneble)
+            tvCurrentTime.text = "00:00"
             viewModel.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+
         }
         tvCurrentTime.text = "00:00"
     }

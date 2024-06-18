@@ -5,8 +5,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerRepository
 
-class PlayerRepositoryImpl(val context: Context): PlayerRepository {
-    var mediaPlayer: MediaPlayer? = null
+class PlayerRepositoryImpl(val mediaPlayer: MediaPlayer): PlayerRepository {
     override fun mdPlayerStart() {
         mediaPlayer?.start()
         isPause = false
@@ -36,7 +35,8 @@ class PlayerRepositoryImpl(val context: Context): PlayerRepository {
     }
 
     override fun provideUrl(url: String) {
-        mediaPlayer = MediaPlayer.create(context, Uri.parse(url))
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
     }
 
     override var isPause: Boolean = true

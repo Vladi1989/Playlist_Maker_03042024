@@ -37,7 +37,7 @@
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:layout_marginEnd">44dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
     </style>
 
     <style name="settings_ll_style">
@@ -102,6 +102,13 @@
     </style>
 
     <style name="pb_search"></style>
+
+    <style name="button_playlist">
+        <item name ="android:background">@drawable/button_playlist</item>
+    </style>
+    <style name="button_favorite">
+        <item name ="android:background">@drawable/button_favorite</item>
+    </style>
 
 
 </resources>
