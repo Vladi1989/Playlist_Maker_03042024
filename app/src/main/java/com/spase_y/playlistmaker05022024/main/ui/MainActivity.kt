@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import com.spase_y.playlistmaker05022024.R
-import com.spase_y.playlistmaker05022024.mediateka.ui.MediatekaActivity
+import com.spase_y.playlistmaker05022024.search.ui.activity.LibraryActivity
 import com.spase_y.playlistmaker05022024.search.ui.activity.SearchActivity
 import com.spase_y.playlistmaker05022024.settings.ui.activity.SettingsActivity
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         }
         val mediateka = findViewById<TextView>(R.id.mediateka)
         mediateka.setOnClickListener {
-            startActivity(Intent(this, MediatekaActivity::class.java))
+            startActivity(Intent(this, LibraryActivity::class.java))
         }
         val find = findViewById<TextView>(R.id.find)
         find.setOnClickListener {

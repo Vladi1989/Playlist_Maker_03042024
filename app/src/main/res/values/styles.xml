@@ -110,4 +110,27 @@
     </style>
 
 
+    <style name="media_library_tablelayout_style">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="tabTextColor">@color/button_text_color</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:background">@color/white</item>
+        <item name="tabIndicatorColor">@color/button_text_color</item>
+    </style>
+
+
+
+
+
+
+    <style name="toolbar">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="toolbar_style">
+        <item name="android:background">@color/white</item>
+    </style>
+
+
 </resources>
