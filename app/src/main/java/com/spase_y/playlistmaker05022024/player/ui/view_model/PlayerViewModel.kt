@@ -1,18 +1,17 @@
 package com.spase_y.playlistmaker05022024.player.ui.view_model
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.spase_y.playlistmaker05022024.creator.Creator
 import com.spase_y.playlistmaker05022024.player.domain.api.FormaterInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerInteractor
-import com.spase_y.playlistmaker05022024.utils.App
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
-    private val formaterInteractor: FormaterInteractor
+    private val formaterInteractor: FormaterInteractor,
+    private val url: String
 ):ViewModel() {
+    init {
+        playerInteractor.provideUrl(url)
+    }
     fun formatText(trackTimeMillis: Long): String {
         return formaterInteractor.formatText(trackTimeMillis)
     }
@@ -54,13 +53,5 @@ class PlayerViewModel(
     }
     fun setOnCompleteListener(function: () -> Unit) {
         playerInteractor.setOnCompleteListener(function)
-    }
-    companion object {
-        fun getViewModelFactory(soundUrl:String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
-                PlayerViewModel(Creator.providePlayerInteractor(app,soundUrl),Creator.provideFormaterInteractor())
-            }
-        }
     }
 }

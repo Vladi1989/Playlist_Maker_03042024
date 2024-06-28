@@ -5,34 +5,38 @@ import android.media.MediaPlayer
 import android.net.Uri
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerRepository
 
-class PlayerRepositoryImpl(context: Context, soundUrl: String): PlayerRepository {
-    val mediaPlayer: MediaPlayer = MediaPlayer.create(context, Uri.parse(soundUrl))
+class PlayerRepositoryImpl(val mediaPlayer: MediaPlayer): PlayerRepository {
     override fun mdPlayerStart() {
-        mediaPlayer.start()
+        mediaPlayer?.start()
         isPause = false
     }
     override fun mdPlayerPause() {
-        mediaPlayer.pause()
+        mediaPlayer?.pause()
         isPause = true
     }
 
     override fun mdPlayerRelease() {
-        mediaPlayer.release()
+        mediaPlayer?.release()
         isPause = true
     }
 
     override fun getDuration(): Long {
-        return mediaPlayer.duration.toLong()
+        return if (mediaPlayer == null) 0 else mediaPlayer!!.duration.toLong()
     }
 
     override fun getCurrentPosition(): Int {
-        return mediaPlayer.currentPosition
+        return if (mediaPlayer == null) 0 else mediaPlayer!!.currentPosition
     }
 
     override fun setOnCompleteListener(callback: () -> Unit) {
-        mediaPlayer.setOnCompletionListener {
+        mediaPlayer?.setOnCompletionListener {
             callback.invoke()
         }
+    }
+
+    override fun provideUrl(url: String) {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
     }
 
     override var isPause: Boolean = true

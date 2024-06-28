@@ -8,4 +8,6 @@ interface PlayerInteractor {
     fun getDuration(): Long
     fun getCurrentPosition(): Int
     fun setOnCompleteListener(callback: () -> Unit)
+    fun provideUrl(url: String)
+
 }

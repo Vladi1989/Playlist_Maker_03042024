@@ -4,19 +4,27 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
-    private lateinit var viewModel: PlayerViewModel
+    val previewUrl by lazy {
+        intent.getStringExtra("previewUrl").toString()
+    }
+    private val viewModel: PlayerViewModel by viewModel {
+        parametersOf(previewUrl)
+    }
     private lateinit var ibPlay: ImageButton
     val handler = Handler(Looper.getMainLooper()!!)
     val tvCurrentTime by lazy {
@@ -25,8 +33,6 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        val previewUrl = intent.getStringExtra("previewUrl").toString()
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(previewUrl))[PlayerViewModel::class.java]
         val buttonBack = findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
             finish()
@@ -96,8 +102,11 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
         viewModel.setOnCompleteListener{
+            handler.removeCallbacks(timerRunneble)
+            tvCurrentTime.text = "00:00"
             viewModel.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+
         }
         tvCurrentTime.text = "00:00"
     }

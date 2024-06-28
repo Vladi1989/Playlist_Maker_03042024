@@ -5,16 +5,11 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.spase_y.playlistmaker05022024.creator.Creator
 import com.spase_y.playlistmaker05022024.search.domain.api.SearchInteractor
 import com.spase_y.playlistmaker05022024.search.domain.model.RequestResult
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.TrackScreenState
 import com.spase_y.playlistmaker05022024.search.ui.activity.SearchActivity
-import com.spase_y.playlistmaker05022024.utils.App
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
@@ -80,14 +75,5 @@ class SearchViewModel(
     override fun onCleared() {
         super.onCleared()
         handler.removeCallbacksAndMessages(null)
-    }
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
-                SearchViewModel(Creator.provideSearchInteractor(app))
-            }
-        }
     }
 }
