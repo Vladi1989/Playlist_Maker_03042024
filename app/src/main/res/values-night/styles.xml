@@ -25,7 +25,7 @@
     <style name="settings_text_views_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/black</item>
+        <item name="android:background">@color/button_text_color</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
@@ -43,7 +43,7 @@
     <style name="settings_ll_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">61dp</item>
-        <item name="android:background">@color/black</item>
+        <item name="android:background">@color/button_text_color</item>
         <item name="android:orientation">horizontal</item>
     </style>
 
@@ -52,7 +52,7 @@
     </style>
 
     <style name="settings_cl_style">
-        <item name="android:background">@color/black</item>
+        <item name="android:background">@color/button_text_color</item>
     </style>
 
     <style name="settings_tv_style">
@@ -74,6 +74,10 @@
 
     <style name="search_clear">
         <item name="android:backgroundTint">@color/black</item>
+    </style>
+
+    <style name="background_mediateka_bar">
+        <item name="android:backgroundTint">@color/button_text_color</item>
     </style>
 
     <style name="tv_text">
@@ -109,6 +113,20 @@
     <style name="button_favorite">
         <item name ="android:background">@drawable/button_favorite</item>
     </style>
+    <style name="media_library_tablelayout_style">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="tabTextColor">@color/white</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:background">@color/button_text_color</item>
+        <item name="tabIndicatorColor">@color/white</item>
+    </style>
+
+
+    <style name="toolbar_style">
+        <item name="android:background">@color/button_text_color</item>
+    </style>
+
 
 
 </resources>
