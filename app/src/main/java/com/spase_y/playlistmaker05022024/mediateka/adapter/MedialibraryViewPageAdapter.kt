@@ -1,11 +1,11 @@
-package com.spase_y.playlistmaker05022024.search.ui.adapter
+package com.spase_y.playlistmaker05022024.mediateka.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.spase_y.playlistmaker05022024.search.ui.fragment.MedialibraryFavoritesFragment
-import com.spase_y.playlistmaker05022024.search.ui.fragment.MedialibraryPlaylistsFragment
+import com.spase_y.playlistmaker05022024.mediateka.fragment.MedialibraryFavoritesFragment
+import com.spase_y.playlistmaker05022024.mediateka.fragment.MedialibraryPlaylistsFragment
 
 class MedialibraryViewPageAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
     : FragmentStateAdapter(fragmentManager, lifecycle) {

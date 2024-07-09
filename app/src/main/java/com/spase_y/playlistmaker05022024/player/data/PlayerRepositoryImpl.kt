@@ -1,8 +1,6 @@
 package com.spase_y.playlistmaker05022024.player.data
 
-import android.content.Context
 import android.media.MediaPlayer
-import android.net.Uri
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerRepository
 
 class PlayerRepositoryImpl(val mediaPlayer: MediaPlayer): PlayerRepository {

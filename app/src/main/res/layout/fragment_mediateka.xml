@@ -15,15 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/buttonBack"
-            style="@style/settings_arrow"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="9dp"
-            android:background="@drawable/arrow_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
             android:id="@+id/textView"
@@ -34,10 +26,7 @@
             android:gravity="center"
             android:text="Медиатека"
             android:textSize="@dimen/playlist_maker_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/buttonBack"
-            app:layout_constraintStart_toEndOf="@+id/buttonBack"
-            app:layout_constraintTop_toTopOf="@+id/buttonBack" />
+            android:textStyle="bold" />
 
 
     </androidx.appcompat.widget.Toolbar>

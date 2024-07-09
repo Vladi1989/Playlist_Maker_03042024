@@ -9,33 +9,40 @@ import com.spase_y.playlistmaker05022024.search.domain.api.SearchInteractor
 import com.spase_y.playlistmaker05022024.search.domain.model.RequestResult
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.TrackScreenState
-import com.spase_y.playlistmaker05022024.search.ui.activity.SearchActivity
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
-):ViewModel() {
+) : ViewModel() {
     private val screenStateLD = MutableLiveData<TrackScreenState>(TrackScreenState.History(searchInteractor.getAllItems()))
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var lastSearchText = ""
-    private val searchRunnable = Runnable {makeRequest(lastSearchText) }
+    private val searchRunnable = Runnable { makeRequest(lastSearchText) }
+
+    companion object {
+        const val CLICK_DEBOUNCE_DELAY = 2000L
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+    }
 
     fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, SearchActivity.CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
+
     fun searchDebounce(text: String) {
         handler.removeCallbacks(searchRunnable)
         lastSearchText = text
-        handler.postDelayed(searchRunnable, SearchActivity.SEARCH_DEBOUNCE_DELAY)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
+
     fun deleteAllItems() {
         searchInteractor.deleteAllItems()
     }
+
     fun getAllItems(): List<Track> {
         return searchInteractor.getAllItems()
     }
@@ -47,23 +54,23 @@ class SearchViewModel(
     fun addItem(it: Track) {
         searchInteractor.addItem(it)
     }
-    fun makeRequest(searchText:String) {
+
+    fun makeRequest(searchText: String) {
         if (searchText.isNullOrEmpty()) {
             screenStateLD.postValue(TrackScreenState.History(searchInteractor.getAllItems()))
             return
         }
         screenStateLD.postValue(TrackScreenState.Loading)
-        searchInteractor.doRequest(searchText, object: SearchInteractor.SearchConsumer{
+        searchInteractor.doRequest(searchText, object : SearchInteractor.SearchConsumer {
             override fun consume(result: RequestResult) {
-                when(result){
+                when (result) {
                     is RequestResult.Error -> {
                         screenStateLD.postValue(TrackScreenState.Error)
                     }
                     is RequestResult.Content -> {
-                        if (result.listTracks.isEmpty()){
+                        if (result.listTracks.isEmpty()) {
                             screenStateLD.postValue(TrackScreenState.Empty)
-                        }
-                        else screenStateLD.postValue(TrackScreenState.Content(result.listTracks))
+                        } else screenStateLD.postValue(TrackScreenState.Content(result.listTracks))
                     }
                 }
             }

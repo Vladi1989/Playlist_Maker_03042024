@@ -6,27 +6,18 @@
     android:layout_height="match_parent"
     style="@style/settings_cl_style">
 
-    <ImageButton style="@style/settings_arrow"
-        android:id="@+id/buttonBack"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="24dp"
-        android:background="@drawable/arrow_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
 
-    <TextView style="@style/settings_tv_style"
+    <TextView
+        style="@style/settings_tv_style"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:text="@string/settings"
         android:gravity="center"
+        android:text="@string/settings"
         android:textSize="@dimen/playlist_maker_size"
         android:textStyle="bold"
-        android:layout_marginStart="@dimen/buttons_margin"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonBack"
-        app:layout_constraintStart_toEndOf="@+id/buttonBack"
-        app:layout_constraintTop_toTopOf="@+id/buttonBack" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="match_parent"

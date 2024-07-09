@@ -1,65 +1,79 @@
-package com.spase_y.playlistmaker05022024.player.ui.activity
+package com.spase_y.playlistmaker05022024.player.ui.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class PlayerActivity : AppCompatActivity() {
-    val previewUrl by lazy {
-        intent.getStringExtra("previewUrl").toString()
+class PlayerFragment : Fragment() {
+
+    private val previewUrl by lazy {
+        arguments?.getString("previewUrl").toString()
     }
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(previewUrl)
     }
     private lateinit var ibPlay: ImageButton
-    val handler = Handler(Looper.getMainLooper()!!)
-    val tvCurrentTime by lazy {
-        findViewById<TextView>(R.id.tvCurrentTime)
+    private val handler = Handler(Looper.getMainLooper()!!)
+    private lateinit var tvCurrentTime: TextView
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_player, container, false)
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
-        val buttonBack = findViewById<ImageButton>(R.id.buttonBack)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val buttonBack = view.findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
-            finish()
+            requireActivity().supportFragmentManager.popBackStack()
         }
-        val trackName = intent.getStringExtra("trackName").toString()
-        val artistName = intent.getStringExtra("artistName").toString()
-        val trackTimeMillis = intent.getLongExtra("trackTimeMillis", 0L)
-        val artworkUrl100 = intent.getStringExtra("artworkUrl100").toString()
-        val collectionName = intent.getStringExtra("collectionName").toString()
-        val releaseDate = intent.getStringExtra("releaseDate").toString()
-        val primaryGenreName = intent.getStringExtra("primaryGenreName").toString()
-        val country = intent.getStringExtra("country").toString()
-        val currentTrackItem = Track(previewUrl,trackName,artistName,trackTimeMillis,artworkUrl100,collectionName,
-        releaseDate,primaryGenreName,country)
-        ibPlay = findViewById(R.id.ibPlay)
-        val ivIcon = findViewById<ImageView>(R.id.ivIcon)
-        val tvName = findViewById<TextView>(R.id.tvName)
-        val tvArtist = findViewById<TextView>(R.id.tvArtistName)
-        val tvDuration = findViewById<TextView>(R.id.tvDuration)
-        val tvYear = findViewById<TextView>(R.id.tvYear)
-        val tvGenre = findViewById<TextView>(R.id.tvGenre)
-        val tvCountry = findViewById<TextView>(R.id.tvCountry)
-        val tvAlbomName = findViewById<TextView>(R.id.tvAlbomName)
-        val llAlbom = findViewById<LinearLayout>(R.id.llAlbom)
-        val llYear = findViewById<LinearLayout>(R.id.llYear)
-        val llGenre = findViewById<LinearLayout>(R.id.llGenre)
-        val llCountry = findViewById<LinearLayout>(R.id.llCountry)
+
+        val trackName = arguments?.getString("trackName").toString()
+        val artistName = arguments?.getString("artistName").toString()
+        val trackTimeMillis = arguments?.getLong("trackTimeMillis", 0L) ?: 0L
+        val artworkUrl100 = arguments?.getString("artworkUrl100").toString()
+        val collectionName = arguments?.getString("collectionName").toString()
+        val releaseDate = arguments?.getString("releaseDate").toString()
+        val primaryGenreName = arguments?.getString("primaryGenreName").toString()
+        val country = arguments?.getString("country").toString()
+
+        val currentTrackItem = Track(
+            previewUrl, trackName, artistName, trackTimeMillis, artworkUrl100, collectionName,
+            releaseDate, primaryGenreName, country
+        )
+
+        ibPlay = view.findViewById(R.id.ibPlay)
+        val ivIcon = view.findViewById<ImageView>(R.id.ivIcon)
+        val tvName = view.findViewById<TextView>(R.id.tvName)
+        val tvArtist = view.findViewById<TextView>(R.id.tvArtistName)
+        val tvDuration = view.findViewById<TextView>(R.id.tvDuration)
+        val tvYear = view.findViewById<TextView>(R.id.tvYear)
+        val tvGenre = view.findViewById<TextView>(R.id.tvGenre)
+        val tvCountry = view.findViewById<TextView>(R.id.tvCountry)
+        val tvAlbomName = view.findViewById<TextView>(R.id.tvAlbomName)
+        val llAlbom = view.findViewById<LinearLayout>(R.id.llAlbom)
+        val llYear = view.findViewById<LinearLayout>(R.id.llYear)
+        val llGenre = view.findViewById<LinearLayout>(R.id.llGenre)
+        val llCountry = view.findViewById<LinearLayout>(R.id.llCountry)
+        tvCurrentTime = view.findViewById(R.id.tvCurrentTime)
+
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
         tvDuration.text = viewModel.formatText(currentTrackItem.trackTimeMillis)
@@ -94,7 +108,7 @@ class PlayerActivity : AppCompatActivity() {
             if (viewModel.getIsPause()) {
                 viewModel.mdPlayerStart()
                 ibPlay.setBackgroundResource(R.drawable.pause)
-                handler.post(timerRunneble)
+                handler.post(timerRunnable)
             } else {
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
                 viewModel.mdPlayerPause()
@@ -102,7 +116,7 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
         viewModel.setOnCompleteListener{
-            handler.removeCallbacks(timerRunneble)
+            handler.removeCallbacks(timerRunnable)
             tvCurrentTime.text = "00:00"
             viewModel.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
@@ -110,8 +124,8 @@ class PlayerActivity : AppCompatActivity() {
         }
         tvCurrentTime.text = "00:00"
     }
-    val timerRunneble = object : Runnable {
 
+    private val timerRunnable = object : Runnable {
         override fun run() {
             val currentPosition =
                 viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
@@ -119,14 +133,16 @@ class PlayerActivity : AppCompatActivity() {
             handler.postDelayed(this, 100)
         }
     }
+
     override fun onPause() {
         super.onPause()
         handler.removeCallbacksAndMessages(null)
         viewModel.mdPlayerPause()
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel.mdPlayerRelease()
         handler.removeCallbacksAndMessages(null)
     }

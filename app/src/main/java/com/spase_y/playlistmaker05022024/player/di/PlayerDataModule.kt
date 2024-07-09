@@ -8,13 +8,13 @@ import com.spase_y.playlistmaker05022024.player.domain.impl.PlayerInteractorImpl
 import org.koin.dsl.module
 
 val playerDataModule = module {
-    single<PlayerInteractor> {
+    factory<PlayerInteractor> {
         PlayerInteractorImpl(get())
     }
     single<FormaterInteractor> {
         FormaterInteractorImpl()
     }
-    single<MediaPlayer> {
+    factory<MediaPlayer> {
         MediaPlayer()
     }
 }

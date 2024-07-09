@@ -50,6 +50,9 @@
     <style name="main_cl_style">
         <item name="android:background">@color/blue</item>
     </style>
+    <style name="main_cl_style2">
+        <item name="android:background">@color/white</item>
+    </style>
 
     <style name="settings_cl_style">
         <item name="android:background">@color/white</item>

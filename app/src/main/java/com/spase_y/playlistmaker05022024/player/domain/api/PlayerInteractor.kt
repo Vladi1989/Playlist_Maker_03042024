@@ -1,5 +1,6 @@
 package com.spase_y.playlistmaker05022024.player.domain.api
 
+
 interface PlayerInteractor {
     fun mdPlayerStart()
     fun mdPlayerPause()
