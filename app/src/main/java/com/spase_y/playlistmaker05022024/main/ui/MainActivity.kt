@@ -9,54 +9,62 @@ import com.spase_y.playlistmaker05022024.search.ui.presentation.SearchFragment
 import com.spase_y.playlistmaker05022024.settings.ui.presentation.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var bottomNavigationView: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val settings = findViewById<TextView>(R.id.setting)
-//        settings.setOnClickListener {
-//            startActivity(Intent(this, SettingsActivity::class.java))
-//        }
-//        val mediateka = findViewById<TextView>(R.id.mediateka)
-//        mediateka.setOnClickListener {
-//            startActivity(Intent(this, LibraryActivity::class.java))
-//        }
-//        val find = findViewById<TextView>(R.id.find)
-//        find.setOnClickListener {
-//            startActivity(Intent(this, SearchActivity::class.java))
-//        }
-        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,
-            MediatekaFragment()
-        ).commit()
-        val bottom_navigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottom_navigation.setOnNavigationItemSelectedListener {
-            item ->
-            when (item.itemId){
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
+
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().replace(
+                R.id.fragmentContainerView,
+                MediatekaFragment()
+            ).commit()
+            bottomNavigationView.selectedItemId = R.id.mediateka_fragment
+        } else {
+            val selectedItemId = savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
+            bottomNavigationView.selectedItemId = selectedItemId
+        }
+
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
                 R.id.search_fragment -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.fragmentContainerView,
                         SearchFragment()
                     ).commit()
                     true
                 }
                 R.id.settings_fragment -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.fragmentContainerView,
                         SettingsFragment()
                     ).commit()
-                true
+                    true
                 }
                 R.id.mediateka_fragment -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.fragmentContainerView,
                         MediatekaFragment()
                     ).commit()
                     true
                 }
-                else -> {
-                    false
-                }
+                else -> false
             }
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("selectedItemId", bottomNavigationView.selectedItemId)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val selectedItemId = savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
+        bottomNavigationView.selectedItemId = selectedItemId
+    }
 }
-
-
-

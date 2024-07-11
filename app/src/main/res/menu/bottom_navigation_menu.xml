@@ -9,4 +9,5 @@
     <item android:id="@+id/settings_fragment"
         android:icon="@drawable/settings_vector"
         android:title="Настройки" />
+
 </menu>

@@ -14,8 +14,7 @@
         android:gravity="center"
         android:text="@string/settings"
         android:textSize="@dimen/playlist_maker_size"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

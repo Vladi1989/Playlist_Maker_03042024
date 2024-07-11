@@ -115,6 +115,7 @@ class SearchFragment : Fragment() {
             editText.setText("")
             val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
+            clHistory.visibility = View.GONE
         }
 
         editText.requestFocus()
@@ -219,6 +220,7 @@ class SearchFragment : Fragment() {
         progressBar.visibility = View.GONE
         noInternet.visibility = View.GONE
         clNotFound.visibility = View.VISIBLE
+
         searchTrackAdapter.listTracks = arrayListOf()
         searchTrackAdapter.notifyDataSetChanged()
     }

@@ -20,13 +20,13 @@
         <TextView
             android:id="@+id/textView"
             style="@style/settings_tv_style"
+            android:text="Медиатека"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_marginStart="@dimen/buttons_margin"
             android:gravity="center"
-            android:text="Медиатека"
             android:textSize="@dimen/playlist_maker_size"
-            android:textStyle="bold" />
+             />
 
 
     </androidx.appcompat.widget.Toolbar>

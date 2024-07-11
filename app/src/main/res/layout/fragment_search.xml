@@ -26,8 +26,7 @@
         android:gravity="center"
         android:text="@string/find"
         android:textSize="@dimen/playlist_maker_size"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -106,7 +105,7 @@
             style="@style/tv_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/not_found"
+            android:text="@string/not_found3"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="@+id/imageView2"
             app:layout_constraintStart_toStartOf="@+id/imageView2"
@@ -157,9 +156,10 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnClearHistory"
                 style="@style/btn_update"
-                android:layout_width="148dp"
+                android:layout_width="200dp"
                 android:layout_height="36dp"
                 android:text="Очистить историю"
+
                 android:maxLines="1"
                 android:paddingHorizontal="10dp"
                 android:textAllCaps="false"
