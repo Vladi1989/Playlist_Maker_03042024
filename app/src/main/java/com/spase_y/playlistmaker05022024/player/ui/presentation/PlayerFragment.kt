@@ -1,8 +1,6 @@
 package com.spase_y.playlistmaker05022024.player.ui.presentation
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,11 +9,15 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -28,7 +30,6 @@ class PlayerFragment : Fragment() {
         parametersOf(previewUrl)
     }
     private lateinit var ibPlay: ImageButton
-    private val handler = Handler(Looper.getMainLooper()!!)
     private lateinit var tvCurrentTime: TextView
 
     override fun onCreateView(
@@ -108,15 +109,15 @@ class PlayerFragment : Fragment() {
             if (viewModel.getIsPause()) {
                 viewModel.mdPlayerStart()
                 ibPlay.setBackgroundResource(R.drawable.pause)
-                handler.post(timerRunnable)
+                startTimerJob()
             } else {
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
                 viewModel.mdPlayerPause()
-                handler.removeCallbacksAndMessages(null)
+                pauseTimerJob()
             }
         }
         viewModel.setOnCompleteListener{
-            handler.removeCallbacks(timerRunnable)
+            pauseTimerJob()
             tvCurrentTime.text = "00:00"
             viewModel.mdPlayerPause()
             ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
@@ -124,19 +125,28 @@ class PlayerFragment : Fragment() {
         }
         tvCurrentTime.text = "00:00"
     }
-
-    private val timerRunnable = object : Runnable {
-        override fun run() {
-            val currentPosition =
-                viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
-            tvCurrentTime.text = viewModel.formatText(currentPosition)
-            handler.postDelayed(this, 100)
-        }
+    fun startTimerJob() {
+        timerJob =
+            CoroutineScope(Dispatchers.Main).launch {
+                while (true) {
+                    val currentPosition =
+                        viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
+                    tvCurrentTime.text = viewModel.formatText(currentPosition)
+                    delay(100)
+                }
+            }
+        timerJob?.start()
     }
+
+    fun pauseTimerJob() {
+        timerJob = null
+    }
+
+    private var timerJob: Job? = null
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacksAndMessages(null)
+        timerJob?.cancel()
         viewModel.mdPlayerPause()
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
@@ -144,6 +154,7 @@ class PlayerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.mdPlayerRelease()
-        handler.removeCallbacksAndMessages(null)
+        timerJob?.cancel()
+
     }
 }
