@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024.search.ui.fragment
+package com.spase_y.playlistmaker05022024.mediateka.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

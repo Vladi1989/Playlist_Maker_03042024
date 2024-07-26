@@ -14,6 +14,7 @@
     <string name="my_app_share_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="practicun_offer">https://yandex.ru/legal/practicum_offer/</string>
     <string name="not_found">Вы не создали\nни одного плейлиста</string>
+    <string name="not_found3">Ничего не нашлось</string>
     <string name="not_found2">Ваша медиатека пуста</string>
     <string name="problems_with_connection">Проблемы со связью</string>
     <string name="on_failure">Загрузка не удалась. Проверьте подключение к интернету</string>

@@ -12,4 +12,6 @@
     <color name="invisible">#00FFFFFF</color>
     <color name="gray">#E6E8EB</color>
     <color name="gray2">#AEAFB4</color>
+    <color name="colorPrimary">#3772E7</color> <!-- Синий цвет -->
+    <color name="colorGray">#808080</color> <!-- Серый цвет -->
 </resources>

@@ -126,6 +126,9 @@
     <style name="toolbar_style">
         <item name="android:background">@color/button_text_color</item>
     </style>
+    <style name="main_cl_style2">
+        <item name="android:background">@color/button_text_color</item>
+    </style>
 
 
 
