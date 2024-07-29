@@ -1,6 +1,7 @@
 package com.spase_y.playlistmaker05022024.player.ui.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ class PlayerFragment : Fragment() {
     }
     private lateinit var ibPlay: ImageButton
     private lateinit var tvCurrentTime: TextView
+    private var isPlaybackCompleted = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -92,7 +94,7 @@ class PlayerFragment : Fragment() {
         if (currentTrackItem.collectionName.isNullOrEmpty()) {
             llAlbom.visibility = View.GONE
         } else {
-            tvAlbomName.text = currentTrackItem.collectionName
+            tvAlbomName.text = truncateText(currentTrackItem.collectionName, 20)
         }
         if (currentTrackItem.primaryGenreName.isNullOrEmpty()) {
             llGenre.visibility = View.GONE
@@ -103,7 +105,6 @@ class PlayerFragment : Fragment() {
             llCountry.visibility = View.GONE
         } else {
             tvCountry.text = currentTrackItem.country
-
         }
         ibPlay.setOnClickListener {
             if (viewModel.getIsPause()) {
@@ -117,44 +118,66 @@ class PlayerFragment : Fragment() {
             }
         }
         viewModel.setOnCompleteListener{
-            pauseTimerJob()
-            tvCurrentTime.text = "00:00"
-            viewModel.mdPlayerPause()
-            ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
-
+            handlePlaybackCompletion()
         }
+
         tvCurrentTime.text = "00:00"
+        Log.d("PlayerFragment", "onViewCreated: Setting initial tvCurrentTime to 00:00")
     }
+
     fun startTimerJob() {
         timerJob =
             CoroutineScope(Dispatchers.Main).launch {
                 while (true) {
-                    val currentPosition =
-                        viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
+                    if (isPlaybackCompleted) {
+                        break
+                    }
+                    val currentPosition = viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
                     tvCurrentTime.text = viewModel.formatText(currentPosition)
-                    delay(100)
+                    Log.d("PlayerFragment", "startTimerJob: Updating tvCurrentTime to ${viewModel.formatText(currentPosition)}")
+                    delay(300)
                 }
             }
         timerJob?.start()
     }
 
     fun pauseTimerJob() {
+        timerJob?.cancel()
         timerJob = null
+        Log.d("PlayerFragment", "pauseTimerJob: Timer job cancelled")
+    }
+
+    private fun handlePlaybackCompletion() {
+        isPlaybackCompleted = true
+        pauseTimerJob()
+        tvCurrentTime.text = "00:00"
+        Log.d("PlayerFragment", "Playback completed. Setting tvCurrentTime to 00:00")
+        viewModel.mdPlayerPause()
+        ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+    }
+
+    private fun truncateText(text: String, maxLength: Int): String {
+        return if (text.length > maxLength) {
+            text.substring(0, maxLength) + "..."
+        } else {
+            text
+        }
     }
 
     private var timerJob: Job? = null
 
     override fun onPause() {
         super.onPause()
-        timerJob?.cancel()
+        pauseTimerJob()
         viewModel.mdPlayerPause()
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
+        Log.d("PlayerFragment", "onPause: Pausing player and cancelling timer job")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.mdPlayerRelease()
-        timerJob?.cancel()
-
+        pauseTimerJob()
+        Log.d("PlayerFragment", "onDestroyView: Releasing player and cancelling timer job")
     }
 }

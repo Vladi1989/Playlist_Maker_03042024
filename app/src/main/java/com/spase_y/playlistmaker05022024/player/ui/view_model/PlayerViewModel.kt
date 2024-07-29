@@ -1,14 +1,9 @@
 package com.spase_y.playlistmaker05022024.player.ui.view_model
 
 
-import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.spase_y.playlistmaker05022024.player.data.PlayerRepositoryImpl
 import com.spase_y.playlistmaker05022024.player.domain.api.FormaterInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerInteractor
-import com.spase_y.playlistmaker05022024.player.domain.impl.FormaterInteractorImpl
-import com.spase_y.playlistmaker05022024.player.domain.impl.PlayerInteractorImpl
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
