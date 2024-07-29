@@ -26,7 +26,7 @@ class SearchRepositoryImpl(
         return localStorage.getAllItems()
     }
 
-    override fun doRequest(text: String): RequestResult {
+    override suspend fun doRequest(text: String): RequestResult {
         return networkClient.doRequest(text)
     }
 

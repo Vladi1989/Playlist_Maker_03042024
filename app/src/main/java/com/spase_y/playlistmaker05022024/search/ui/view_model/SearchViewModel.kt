@@ -1,42 +1,46 @@
 package com.spase_y.playlistmaker05022024.search.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.spase_y.playlistmaker05022024.search.domain.api.SearchInteractor
 import com.spase_y.playlistmaker05022024.search.domain.model.RequestResult
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.TrackScreenState
+import kotlinx.coroutines.*
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
     private val screenStateLD = MutableLiveData<TrackScreenState>(TrackScreenState.History(searchInteractor.getAllItems()))
-    private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private var lastSearchText = ""
-    private val searchRunnable = Runnable { makeRequest(lastSearchText) }
 
     companion object {
         const val CLICK_DEBOUNCE_DELAY = 2000L
         const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
+
+
     fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
-
+    private var searchJob: Job? = null
     fun searchDebounce(text: String) {
-        handler.removeCallbacks(searchRunnable)
-        lastSearchText = text
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            makeRequest(text)
+        }
     }
 
     fun deleteAllItems() {
@@ -61,26 +65,30 @@ class SearchViewModel(
             return
         }
         screenStateLD.postValue(TrackScreenState.Loading)
-        searchInteractor.doRequest(searchText, object : SearchInteractor.SearchConsumer {
-            override fun consume(result: RequestResult) {
-                when (result) {
-                    is RequestResult.Error -> {
-                        screenStateLD.postValue(TrackScreenState.Error)
-                    }
-                    is RequestResult.Content -> {
-                        if (result.listTracks.isEmpty()) {
-                            screenStateLD.postValue(TrackScreenState.Empty)
-                        } else screenStateLD.postValue(TrackScreenState.Content(result.listTracks))
+        viewModelScope.launch(Dispatchers.IO) {
+            searchInteractor.doRequest(searchText, object : SearchInteractor.SearchConsumer {
+                override fun consume(result: RequestResult) {
+                    when (result) {
+                        is RequestResult.Error -> {
+                            screenStateLD.postValue(TrackScreenState.Error)
+                        }
+                        is RequestResult.Content -> {
+                            if (result.listTracks.isEmpty()) {
+                                screenStateLD.postValue(TrackScreenState.Empty)
+                            } else {
+                                screenStateLD.postValue(TrackScreenState.Content(result.listTracks))
+                            }
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     fun getScreenStateLD(): LiveData<TrackScreenState> = screenStateLD
 
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacksAndMessages(null)
+        searchJob?.cancel()
     }
 }
