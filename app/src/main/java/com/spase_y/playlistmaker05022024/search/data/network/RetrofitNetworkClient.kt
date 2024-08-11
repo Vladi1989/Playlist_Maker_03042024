@@ -33,7 +33,7 @@ class RetrofitNetworkClient(private val context: Context): NetworkClient {
         return false
     }
 
-    override fun doRequest(text: String): RequestResult {
+    override suspend fun doRequest(text: String): RequestResult {
         if (!isConnected()){
             return RequestResult.Error
         }

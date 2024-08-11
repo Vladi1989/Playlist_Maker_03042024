@@ -8,7 +8,7 @@ interface SearchRepository {
     fun deleteItem(track: Track)
     fun deleteAllItems()
     fun getAllItems():MutableList<Track>
-    fun doRequest(text:String): RequestResult
+    suspend fun doRequest(text:String): RequestResult
 
 
 }
