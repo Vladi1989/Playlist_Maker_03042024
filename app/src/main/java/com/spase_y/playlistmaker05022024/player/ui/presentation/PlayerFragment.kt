@@ -75,7 +75,9 @@ class PlayerFragment : Fragment() {
         val llYear = view.findViewById<LinearLayout>(R.id.llYear)
         val llGenre = view.findViewById<LinearLayout>(R.id.llGenre)
         val llCountry = view.findViewById<LinearLayout>(R.id.llCountry)
+        val ibFavorite = view.findViewById<ImageButton>(R.id.ibFavorite)
         tvCurrentTime = view.findViewById(R.id.tvCurrentTime)
+
 
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
@@ -115,6 +117,27 @@ class PlayerFragment : Fragment() {
                 ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
                 viewModel.mdPlayerPause()
                 pauseTimerJob()
+            }
+        }
+        viewModel.getIsTrackSaved().observe(viewLifecycleOwner){
+            when (it){
+                true -> {
+                    ibFavorite.setBackgroundResource(R.drawable.favorite_active)
+                }
+                false -> {
+                    ibFavorite.setBackgroundResource(R.drawable.favorite)
+                }
+                null -> {}
+            }
+        }
+        viewModel.checkIsTrackSaved(currentTrackItem)
+        ibFavorite.setOnClickListener{
+            if(viewModel.isTrackSavedToFavorites() == true){
+                ibFavorite.setBackgroundResource(R.drawable.favorite)
+                viewModel.removeTrackFromFavorites(currentTrackItem)
+            } else if(viewModel.isTrackSavedToFavorites() == false) {
+                ibFavorite.setBackgroundResource(R.drawable.favorite_active)
+                viewModel.addTrackToFavorites(currentTrackItem)
             }
         }
         viewModel.setOnCompleteListener{

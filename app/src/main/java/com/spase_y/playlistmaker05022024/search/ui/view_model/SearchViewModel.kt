@@ -8,6 +8,8 @@ import com.spase_y.playlistmaker05022024.search.domain.api.SearchInteractor
 import com.spase_y.playlistmaker05022024.search.domain.model.RequestResult
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.TrackScreenState
+import com.spase_y.playlistmaker05022024.utils.CLICK_DEBOUNCE_DELAY
+import com.spase_y.playlistmaker05022024.utils.SEARCH_DEBOUNCE_DELAY
 import kotlinx.coroutines.*
 
 class SearchViewModel(
@@ -15,12 +17,6 @@ class SearchViewModel(
 ) : ViewModel() {
     private val screenStateLD = MutableLiveData<TrackScreenState>(TrackScreenState.History(searchInteractor.getAllItems()))
     private var isClickAllowed = true
-
-    companion object {
-        const val CLICK_DEBOUNCE_DELAY = 2000L
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
-    }
-
 
 
     fun clickDebounce(): Boolean {

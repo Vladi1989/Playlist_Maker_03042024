@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024.mediateka.ui.presentation
+package com.spase_y.playlistmaker05022024.mediateka.root.ui.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.tabs.TabLayoutMediator
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.databinding.FragmentMediatekaBinding
-import com.spase_y.playlistmaker05022024.mediateka.adapter.MedialibraryViewPageAdapter
+import com.spase_y.playlistmaker05022024.mediateka.root.ui.adapter.MedialibraryViewPageAdapter
 
 
 class MediatekaFragment : Fragment() {

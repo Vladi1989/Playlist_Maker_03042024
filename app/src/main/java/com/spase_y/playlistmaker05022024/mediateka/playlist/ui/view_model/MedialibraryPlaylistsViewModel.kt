@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024.search.ui.view_model
+package com.spase_y.playlistmaker05022024.mediateka.playlist.ui.view_model
 
 import androidx.lifecycle.ViewModel
 

@@ -1,4 +1,4 @@
-package com.spase_y.playlistmaker05022024.mediateka.fragment
+package com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.spase_y.playlistmaker05022024.databinding.FragmentPlaylistsMedialibraryBinding
-import com.spase_y.playlistmaker05022024.search.ui.view_model.MedialibraryPlaylistsViewModel
+import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.view_model.MedialibraryPlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 class MedialibraryPlaylistsFragment : Fragment() {
 

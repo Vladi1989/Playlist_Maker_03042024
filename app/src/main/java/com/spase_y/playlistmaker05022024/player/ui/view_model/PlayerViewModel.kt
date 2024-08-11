@@ -1,19 +1,35 @@
 package com.spase_y.playlistmaker05022024.player.ui.view_model
 
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.spase_y.playlistmaker05022024.mediateka.favorites.domain.api.DataBaseInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.FormaterInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerInteractor
+import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
     private val formaterInteractor: FormaterInteractor,
+    private val dataBaseInteractor: DataBaseInteractor,
     private val url: String
 ) : ViewModel() {
+    private val isTrackSaved: MutableLiveData<Boolean?> = MutableLiveData(null)
     init {
         playerInteractor.provideUrl(url)
     }
-
+    fun getIsTrackSaved():LiveData<Boolean?> = isTrackSaved
+    fun checkIsTrackSaved(currentTrackItem:Track){
+        isTrackSaved.postValue(null)
+        viewModelScope.launch {
+            dataBaseInteractor.getFavoritesList().collect{
+                isTrackSaved.postValue(it.contains(currentTrackItem))
+            }
+        }
+    }
     fun formatText(trackTimeMillis: Long): String {
         return formaterInteractor.formatText(trackTimeMillis)
     }
@@ -57,6 +73,23 @@ class PlayerViewModel(
 
     fun setOnCompleteListener(function: () -> Unit) {
         playerInteractor.setOnCompleteListener(function)
+    }
+
+    fun isTrackSavedToFavorites(): Boolean? {
+        return isTrackSaved.value
+    }
+
+    fun removeTrackFromFavorites(currentTrackItem: Track) {
+        viewModelScope.launch {
+            dataBaseInteractor.removeTrackFromFavorites(currentTrackItem)
+
+        }
+    }
+
+    fun addTrackToFavorites(currentTrackItem: Track) {
+        viewModelScope.launch {
+            dataBaseInteractor.addTrackToFavorites(currentTrackItem)
+        }
     }
 }
 

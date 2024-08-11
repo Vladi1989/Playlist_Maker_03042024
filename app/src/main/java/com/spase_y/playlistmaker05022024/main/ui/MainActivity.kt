@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spase_y.playlistmaker05022024.R
-import com.spase_y.playlistmaker05022024.mediateka.ui.presentation.MediatekaFragment
+import com.spase_y.playlistmaker05022024.mediateka.root.ui.fragment.MediatekaFragment
 import com.spase_y.playlistmaker05022024.search.ui.presentation.SearchFragment
 import com.spase_y.playlistmaker05022024.settings.ui.presentation.SettingsFragment
 
