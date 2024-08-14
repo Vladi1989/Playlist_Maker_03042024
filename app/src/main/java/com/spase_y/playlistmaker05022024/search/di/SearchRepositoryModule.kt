@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val searchRepositoryModule = module {
     single<SearchRepository> {
-        SearchRepositoryImpl(get(),get())
+        SearchRepositoryImpl(get(), get())
     }
     single {
         LocalStorage(get())

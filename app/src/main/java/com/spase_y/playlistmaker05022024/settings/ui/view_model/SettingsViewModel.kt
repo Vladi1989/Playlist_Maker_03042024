@@ -9,19 +9,23 @@ class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
 ) : ViewModel() {
-    fun getThemeSettings(): ThemeSettings{
+    fun getThemeSettings(): ThemeSettings {
         return settingsInteractor.getThemeSettings()
     }
+
     fun updateThemeSetting(settings: ThemeSettings) {
         return settingsInteractor.updateThemeSetting(settings)
     }
-    fun shareApp(){
+
+    fun shareApp() {
         sharingInteractor.shareApp()
     }
-    fun openTerms(){
+
+    fun openTerms() {
         sharingInteractor.openTerms()
     }
-    fun openSupport(){
+
+    fun openSupport() {
         sharingInteractor.openSupport()
     }
 }

@@ -11,5 +11,5 @@ val appDatabaseModule = module {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .build()
     }
-    single<FavoriteTrackDao>{ get<AppDatabase>().favoriteTrackDao() }
+    single<FavoriteTrackDao> { get<AppDatabase>().favoriteTrackDao() }
 }

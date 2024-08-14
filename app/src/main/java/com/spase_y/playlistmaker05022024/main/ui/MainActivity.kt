@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity() {
             ).commit()
             bottomNavigationView.selectedItemId = R.id.mediateka_fragment
         } else {
-            val selectedItemId = savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
+            val selectedItemId =
+                savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
             bottomNavigationView.selectedItemId = selectedItemId
         }
 
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
                     ).commit()
                     true
                 }
+
                 R.id.settings_fragment -> {
                     supportFragmentManager.beginTransaction().replace(
                         R.id.fragmentContainerView,
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                     ).commit()
                     true
                 }
+
                 R.id.mediateka_fragment -> {
                     supportFragmentManager.beginTransaction().replace(
                         R.id.fragmentContainerView,
@@ -52,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                     ).commit()
                     true
                 }
+
                 else -> false
             }
         }

@@ -20,7 +20,8 @@ class MediatekaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMediatekaBinding.inflate(inflater, container, false)
-        return binding.root}
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

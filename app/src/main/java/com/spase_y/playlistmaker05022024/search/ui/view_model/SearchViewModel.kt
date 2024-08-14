@@ -15,7 +15,8 @@ import kotlinx.coroutines.*
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
-    private val screenStateLD = MutableLiveData<TrackScreenState>(TrackScreenState.History(searchInteractor.getAllItems()))
+    private val screenStateLD =
+        MutableLiveData<TrackScreenState>(TrackScreenState.History(searchInteractor.getAllItems()))
     private var isClickAllowed = true
 
 
@@ -30,6 +31,7 @@ class SearchViewModel(
         }
         return current
     }
+
     private var searchJob: Job? = null
     fun searchDebounce(text: String) {
         searchJob?.cancel()
@@ -68,6 +70,7 @@ class SearchViewModel(
                         is RequestResult.Error -> {
                             screenStateLD.postValue(TrackScreenState.Error)
                         }
+
                         is RequestResult.Content -> {
                             if (result.listTracks.isEmpty()) {
                                 screenStateLD.postValue(TrackScreenState.Empty)

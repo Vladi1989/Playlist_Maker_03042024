@@ -5,7 +5,7 @@ import com.spase_y.playlistmaker05022024.mediateka.favorites.domain.api.DataBase
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
-class DataBaseInteractorImpl(private val repository: DataBaseRepository):DataBaseInteractor {
+class DataBaseInteractorImpl(private val repository: DataBaseRepository) : DataBaseInteractor {
 
 
     override suspend fun removeTrackFromFavorites(currentTrackItem: Track) {
@@ -19,5 +19,6 @@ class DataBaseInteractorImpl(private val repository: DataBaseRepository):DataBas
     override fun getFavoritesList(): Flow<List<Track>> {
         return repository.getFavoritesList()
     }
+
 
 }

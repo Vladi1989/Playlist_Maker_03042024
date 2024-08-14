@@ -5,7 +5,7 @@ import com.spase_y.playlistmaker05022024.mediateka.favorites.domain.api.DataBase
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
-class DataBaseRepositoryImpl(private val dao: FavoriteTrackDao):DataBaseRepository {
+class DataBaseRepositoryImpl(private val dao: FavoriteTrackDao) : DataBaseRepository {
 
 
     override suspend fun removeTrackFromFavorites(currentTrackItem: Track) {
@@ -16,7 +16,7 @@ class DataBaseRepositoryImpl(private val dao: FavoriteTrackDao):DataBaseReposito
         dao.insertTrack(currentTrackItem)
     }
 
-    override  fun getFavoritesList(): Flow<List<Track>> {
+    override fun getFavoritesList(): Flow<List<Track>> {
         return dao.getAllFavoriteTracks()
     }
 }

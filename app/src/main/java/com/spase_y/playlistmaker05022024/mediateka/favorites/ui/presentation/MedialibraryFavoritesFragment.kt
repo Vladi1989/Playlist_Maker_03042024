@@ -1,6 +1,7 @@
 package com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,18 +29,16 @@ class MedialibraryFavoritesFragment : Fragment() {
         _binding = FragmentFavouritesMedialibraryBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    val tracksAdapter = TracksAdapter()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getFavoritesTracks().observe(viewLifecycleOwner){
-            if(it.isEmpty()){
+        viewModel.getFavoritesTracks().observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
                 binding.rvList.visibility = View.GONE
                 binding.clNotFound.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 binding.rvList.visibility = View.VISIBLE
                 binding.clNotFound.visibility = View.GONE
-                val tracksAdapter = TracksAdapter()
                 tracksAdapter.listTracks = ArrayList(it)
                 tracksAdapter.onItemClick = {
                     showPlayerFragment(it)
@@ -56,19 +55,19 @@ class MedialibraryFavoritesFragment : Fragment() {
         if (viewModel.clickDebounce()) {
             val playerFragment = PlayerFragment()
             val args = Bundle()
-            args.putString("trackName", track.trackName)
-            args.putString("previewUrl", track.previewUrl)
-            args.putString("artistName", track.artistName)
-            args.putLong("trackTimeMillis", track.trackTimeMillis)
-            args.putString("artworkUrl100", track.artworkUrl100)
-            args.putString("collectionName", track.collectionName)
-            args.putString("releaseDate", track.releaseDate)
-            args.putString("primaryGenreName", track.primaryGenreName)
-            args.putString("country", track.country)
+            args.putString(TRACK_NAME_TAG, track.trackName)
+            args.putString(PREWIEW_URL_TAG, track.previewUrl)
+            args.putString(ARTIST_NAME_TAG, track.artistName)
+            args.putLong(TRACK_TIME_MILLIS_TAG, track.trackTimeMillis)
+            args.putString(ARTWORK_URL_100_TAG, track.artworkUrl100)
+            args.putString(COLLECTION_NAME_TAG, track.collectionName)
+            args.putString(RELEASE_DATE_TAG, track.releaseDate)
+            args.putString(PRIMARY_GENRE_NAME_TAG, track.primaryGenreName)
+            args.putString(COUNTRY_TAG, track.country)
             playerFragment.arguments = args
 
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, playerFragment)
+                .add(R.id.fragmentContainerView, playerFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -80,3 +79,13 @@ class MedialibraryFavoritesFragment : Fragment() {
         }
     }
 }
+
+const val TRACK_NAME_TAG = "trackName"
+const val PREWIEW_URL_TAG = "previewUrl"
+const val ARTIST_NAME_TAG = "artistName"
+const val TRACK_TIME_MILLIS_TAG = "trackTimeMillis"
+const val ARTWORK_URL_100_TAG = "artworkUrl100"
+const val COLLECTION_NAME_TAG = "collectionName"
+const val RELEASE_DATE_TAG = "releaseDate"
+const val PRIMARY_GENRE_NAME_TAG = "primaryGenreName"
+const val COUNTRY_TAG = "country"

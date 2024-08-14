@@ -1,7 +1,6 @@
 package com.spase_y.playlistmaker05022024.search.ui.presentation
 
 
-
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -24,6 +23,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.databinding.FragmentSearchBinding
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTIST_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTWORK_URL_100_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COLLECTION_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COUNTRY_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PREWIEW_URL_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PRIMARY_GENRE_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.RELEASE_DATE_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_TIME_MILLIS_TAG
 import com.spase_y.playlistmaker05022024.player.ui.presentation.PlayerFragment
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.TrackScreenState
@@ -45,7 +53,11 @@ class SearchFragment : Fragment() {
     private lateinit var btnClearHistory: AppCompatButton
     private lateinit var rvTracks: RecyclerView
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val binding = FragmentSearchBinding.inflate(inflater, container, false)
         editText = binding.editText
         progressBar = binding.pb
@@ -61,12 +73,11 @@ class SearchFragment : Fragment() {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         searchTrackAdapter = TracksAdapter().apply {
-             onItemClick = { track -> showPlayerFragment(track) }
+            onItemClick = { track -> showPlayerFragment(track) }
         }
         historyTrackAdapter = TracksAdapter().apply {
             onItemClick = { track -> showPlayerFragment(track) }
@@ -115,7 +126,8 @@ class SearchFragment : Fragment() {
             searchTrackAdapter.listTracks = arrayListOf()
             searchTrackAdapter.notifyDataSetChanged()
             editText.setText("")
-            val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManager =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
             clHistory.visibility = View.GONE
         }
@@ -164,16 +176,19 @@ class SearchFragment : Fragment() {
         if (viewModel.clickDebounce()) {
             val playerFragment = PlayerFragment()
             val args = Bundle()
-            args.putString("trackName", track.trackName)
-            args.putString("previewUrl", track.previewUrl)
-            args.putString("artistName", track.artistName)
-            args.putLong("trackTimeMillis", track.trackTimeMillis)
-            args.putString("artworkUrl100", track.artworkUrl100)
-            args.putString("collectionName", track.collectionName)
-            args.putString("releaseDate", track.releaseDate)
-            args.putString("primaryGenreName", track.primaryGenreName)
-            args.putString("country", track.country)
+            args.putString(TRACK_NAME_TAG, track.trackName)
+            args.putString(PREWIEW_URL_TAG, track.previewUrl)
+            args.putString(ARTIST_NAME_TAG, track.artistName)
+            args.putLong(TRACK_TIME_MILLIS_TAG, track.trackTimeMillis)
+            args.putString(ARTWORK_URL_100_TAG, track.artworkUrl100)
+            args.putString(COLLECTION_NAME_TAG, track.collectionName)
+            args.putString(RELEASE_DATE_TAG, track.releaseDate)
+            args.putString(PRIMARY_GENRE_NAME_TAG, track.primaryGenreName)
+            args.putString(COUNTRY_TAG, track.country)
+
             playerFragment.arguments = args
+
+
 
             if (viewModel.getAllItems().contains(track)) {
                 viewModel.deleteItem(track)
@@ -183,7 +198,7 @@ class SearchFragment : Fragment() {
             }
 
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, playerFragment)
+                .add(R.id.fragmentContainerView, playerFragment)
                 .addToBackStack(null)
                 .commit()
         }

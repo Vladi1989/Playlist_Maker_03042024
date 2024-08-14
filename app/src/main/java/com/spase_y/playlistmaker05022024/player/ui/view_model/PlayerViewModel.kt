@@ -17,19 +17,42 @@ class PlayerViewModel(
     private val dataBaseInteractor: DataBaseInteractor,
     private val url: String
 ) : ViewModel() {
+    private var trackId = -1
     private val isTrackSaved: MutableLiveData<Boolean?> = MutableLiveData(null)
+
     init {
         playerInteractor.provideUrl(url)
     }
-    fun getIsTrackSaved():LiveData<Boolean?> = isTrackSaved
-    fun checkIsTrackSaved(currentTrackItem:Track){
-        isTrackSaved.postValue(null)
+
+    fun getIsTrackSaved(): LiveData<Boolean?> = isTrackSaved
+    fun checkIsTrackSaved(currentTrackItem: Track) {
         viewModelScope.launch {
-            dataBaseInteractor.getFavoritesList().collect{
-                isTrackSaved.postValue(it.contains(currentTrackItem))
+            dataBaseInteractor.getFavoritesList().collect {
+                isTrackSaved.postValue(containsTrackIgnoringId(it,currentTrackItem))
             }
         }
     }
+    fun containsTrackIgnoringId(trackList: List<Track>, trackToCheck: Track): Boolean {
+        var isContains = false
+        trackList.forEach { track ->
+            if (track.previewUrl == trackToCheck.previewUrl &&
+                track.trackName == trackToCheck.trackName &&
+                track.artistName == trackToCheck.artistName &&
+                track.trackTimeMillis == trackToCheck.trackTimeMillis &&
+                track.artworkUrl100 == trackToCheck.artworkUrl100 &&
+                track.collectionName == trackToCheck.collectionName &&
+                track.releaseDate == trackToCheck.releaseDate &&
+                track.primaryGenreName == trackToCheck.primaryGenreName &&
+                track.country == trackToCheck.country) {
+                trackId = track.trackId
+                isContains = true
+                return isContains
+            }
+        }
+        return isContains
+    }
+
+
     fun formatText(trackTimeMillis: Long): String {
         return formaterInteractor.formatText(trackTimeMillis)
     }
@@ -75,20 +98,19 @@ class PlayerViewModel(
         playerInteractor.setOnCompleteListener(function)
     }
 
-    fun isTrackSavedToFavorites(): Boolean? {
-        return isTrackSaved.value
-    }
 
     fun removeTrackFromFavorites(currentTrackItem: Track) {
+        val trackToDelete = currentTrackItem.copy(trackId = trackId)
         viewModelScope.launch {
-            dataBaseInteractor.removeTrackFromFavorites(currentTrackItem)
-
+            dataBaseInteractor.removeTrackFromFavorites(trackToDelete)
+            isTrackSaved.postValue(false)
         }
     }
 
     fun addTrackToFavorites(currentTrackItem: Track) {
         viewModelScope.launch {
             dataBaseInteractor.addTrackToFavorites(currentTrackItem)
+            isTrackSaved.postValue(true)
         }
     }
 }

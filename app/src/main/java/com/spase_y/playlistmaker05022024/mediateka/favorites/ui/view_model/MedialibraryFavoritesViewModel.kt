@@ -15,17 +15,20 @@ class MedialibraryFavoritesViewModel(
 ) : ViewModel() {
     private var isClickAllowed = true
     private val favoriteTracks: MutableLiveData<List<Track>> = MutableLiveData()
+
     init {
         getFavorites()
     }
+
     fun getFavorites() {
         viewModelScope.launch {
-            dataBaseInteractor.getFavoritesList().collect{list->
+            dataBaseInteractor.getFavoritesList().collect { list ->
                 favoriteTracks.postValue(list)
             }
         }
     }
-    fun getFavoritesTracks():LiveData<List<Track>> = favoriteTracks
+
+    fun getFavoritesTracks(): LiveData<List<Track>> = favoriteTracks
 
     fun clickDebounce(): Boolean {
         val current = isClickAllowed

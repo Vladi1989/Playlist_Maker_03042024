@@ -9,11 +9,22 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTIST_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTWORK_URL_100_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COLLECTION_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COUNTRY_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PREWIEW_URL_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PRIMARY_GENRE_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.RELEASE_DATE_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_TIME_MILLIS_TAG
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import com.spase_y.playlistmaker05022024.utils.isDarkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -43,19 +54,23 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.findViewById<ScrollView>(R.id.root).setOnClickListener{
+
+        }
+
         val buttonBack = view.findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        val trackName = arguments?.getString("trackName").toString()
-        val artistName = arguments?.getString("artistName").toString()
-        val trackTimeMillis = arguments?.getLong("trackTimeMillis", 0L) ?: 0L
-        val artworkUrl100 = arguments?.getString("artworkUrl100").toString()
-        val collectionName = arguments?.getString("collectionName").toString()
-        val releaseDate = arguments?.getString("releaseDate").toString()
-        val primaryGenreName = arguments?.getString("primaryGenreName").toString()
-        val country = arguments?.getString("country").toString()
+        val trackName = arguments?.getString(TRACK_NAME_TAG).toString()
+        val artistName = arguments?.getString(ARTIST_NAME_TAG).toString()
+        val trackTimeMillis = arguments?.getLong(TRACK_TIME_MILLIS_TAG, 0L) ?: 0L
+        val artworkUrl100 = arguments?.getString(ARTWORK_URL_100_TAG).toString()
+        val collectionName = arguments?.getString(COLLECTION_NAME_TAG).toString()
+        val releaseDate = arguments?.getString(RELEASE_DATE_TAG).toString()
+        val primaryGenreName = arguments?.getString(PRIMARY_GENRE_NAME_TAG).toString()
+        val country = arguments?.getString(COUNTRY_TAG).toString()
 
         val currentTrackItem = Track(
             previewUrl, trackName, artistName, trackTimeMillis, artworkUrl100, collectionName,
@@ -119,28 +134,39 @@ class PlayerFragment : Fragment() {
                 pauseTimerJob()
             }
         }
-        viewModel.getIsTrackSaved().observe(viewLifecycleOwner){
-            when (it){
+        viewModel.getIsTrackSaved().observe(viewLifecycleOwner) {
+            when (it) {
                 true -> {
-                    ibFavorite.setBackgroundResource(R.drawable.favorite_active)
+                    if(isDarkTheme(requireContext())){
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_night_on)
+                    }
+                    else {
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_day_on)
+                    }
                 }
                 false -> {
-                    ibFavorite.setBackgroundResource(R.drawable.favorite)
+                    if(isDarkTheme(requireContext())){
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_night_off)
+                    }
+                    else {
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_day_off)
+                    }
+
                 }
+
                 null -> {}
             }
         }
+
         viewModel.checkIsTrackSaved(currentTrackItem)
-        ibFavorite.setOnClickListener{
-            if(viewModel.isTrackSavedToFavorites() == true){
-                ibFavorite.setBackgroundResource(R.drawable.favorite)
+        ibFavorite.setOnClickListener {
+            if (viewModel.getIsTrackSaved().value == true) {
                 viewModel.removeTrackFromFavorites(currentTrackItem)
-            } else if(viewModel.isTrackSavedToFavorites() == false) {
-                ibFavorite.setBackgroundResource(R.drawable.favorite_active)
+            } else if (viewModel.getIsTrackSaved().value == false) {
                 viewModel.addTrackToFavorites(currentTrackItem)
             }
         }
-        viewModel.setOnCompleteListener{
+        viewModel.setOnCompleteListener {
             handlePlaybackCompletion()
         }
 
@@ -155,9 +181,15 @@ class PlayerFragment : Fragment() {
                     if (isPlaybackCompleted) {
                         break
                     }
-                    val currentPosition = viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
+                    val currentPosition =
+                        viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
                     tvCurrentTime.text = viewModel.formatText(currentPosition)
-                    Log.d("PlayerFragment", "startTimerJob: Updating tvCurrentTime to ${viewModel.formatText(currentPosition)}")
+                    Log.d(
+                        "PlayerFragment",
+                        "startTimerJob: Updating tvCurrentTime to ${
+                            viewModel.formatText(currentPosition)
+                        }"
+                    )
                     delay(300)
                 }
             }

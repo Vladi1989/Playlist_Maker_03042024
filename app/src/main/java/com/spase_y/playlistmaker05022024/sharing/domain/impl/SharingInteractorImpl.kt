@@ -24,9 +24,11 @@ class SharingInteractorImpl(
     }
 
     private fun getSupportEmailData(): EmailData {
-        return EmailData("vlad@gmail.com",
+        return EmailData(
+            "vlad@gmail.com",
             "Спасибо разработчикам и разработчицам за крутое приложение!",
-            "Сообщение разработчикам и разработчицам приложения Playlist Maker")
+            "Сообщение разработчикам и разработчицам приложения Playlist Maker"
+        )
     }
 
     private fun getTermsLink(): String {

@@ -7,8 +7,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.MedialibraryFavoritesFragment
 import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation.MedialibraryPlaylistsFragment
 
-class MedialibraryViewPageAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
-    : FragmentStateAdapter(fragmentManager, lifecycle) {
+class MedialibraryViewPageAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
+    FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
         return 2
