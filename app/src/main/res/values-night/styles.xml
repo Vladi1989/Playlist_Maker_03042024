@@ -133,6 +133,14 @@
         <item name="android:background">@color/button_text_color</item>
     </style>
 
+    <style name="bottom_navigation">
+        <item name="itemIconTint">
+            @drawable/bottom_nav_colors_night
+        </item>
+        <item name="itemTextColor">
+            @drawable/bottom_nav_colors_night
+        </item>
+    </style>
 
 
 </resources>

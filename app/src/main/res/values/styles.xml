@@ -138,5 +138,16 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="bottom_navigation">
+        <item name="itemIconTint">
+            @drawable/bottom_nav_colors
+        </item>
+        <item name="itemTextColor">
+            @drawable/bottom_nav_colors
+        </item>
+    </style>
+
+
+
 
 </resources>
