@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.main.ui.MainActivity
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTIST_NAME_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTWORK_URL_100_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COLLECTION_NAME_TAG
@@ -57,10 +58,12 @@ class PlayerFragment : Fragment() {
         view.findViewById<ScrollView>(R.id.root).setOnClickListener{
 
         }
-
+        (requireActivity() as MainActivity).hideBottomNavigation()
         val buttonBack = view.findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
+            (requireActivity() as MainActivity).showBottomNavigation()
+
         }
 
         val trackName = arguments?.getString(TRACK_NAME_TAG).toString()

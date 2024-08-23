@@ -29,11 +29,10 @@ class TracksAdapter : RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
             val tvName = itemView.findViewById<TextView>(R.id.tvName)
             val tvDuration = itemView.findViewById<TextView>(R.id.tvDuration)
             val tvNameArtists = itemView.findViewById<TextView>(R.id.tvNameArtist)
+            tvNameArtists.text = track.artistName
             val ivLogo = itemView.findViewById<ImageView>(R.id.ivTrack)
 
             tvName.text = track.trackName
-            tvNameArtists.text = truncateText(track.artistName, 20) //
-
             itemView.setOnClickListener {
                 onItemClick.invoke(track)
             }

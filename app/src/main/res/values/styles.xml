@@ -145,6 +145,9 @@
         <item name="itemTextColor">
             @drawable/bottom_nav_colors
         </item>
+        <item name="android:background">
+            @color/white
+        </item>
     </style>
 
 

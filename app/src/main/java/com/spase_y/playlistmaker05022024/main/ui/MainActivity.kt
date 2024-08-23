@@ -2,6 +2,7 @@ package com.spase_y.playlistmaker05022024.main.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.mediateka.root.ui.fragment.MediatekaFragment
@@ -71,4 +72,11 @@ class MainActivity : AppCompatActivity() {
         val selectedItemId = savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
         bottomNavigationView.selectedItemId = selectedItemId
     }
+    fun showBottomNavigation(){
+        bottomNavigationView.visibility = View.VISIBLE
+    }
+    fun hideBottomNavigation(){
+        bottomNavigationView.visibility = View.GONE
+    }
+
 }

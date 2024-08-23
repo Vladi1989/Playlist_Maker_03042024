@@ -1,19 +1,19 @@
 package com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.databinding.FragmentFavouritesMedialibraryBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.view_model.MedialibraryFavoritesViewModel
 import com.spase_y.playlistmaker05022024.player.ui.presentation.PlayerFragment
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.adapter.TracksAdapter
+import com.spase_y.playlistmaker05022024.utils.BottomSpaceItemDecoration
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MedialibraryFavoritesFragment : Fragment() {
 
@@ -29,9 +29,11 @@ class MedialibraryFavoritesFragment : Fragment() {
         _binding = FragmentFavouritesMedialibraryBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     val tracksAdapter = TracksAdapter()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.rvList.addItemDecoration(BottomSpaceItemDecoration(180))
         viewModel.getFavoritesTracks().observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 binding.rvList.visibility = View.GONE

@@ -140,6 +140,9 @@
         <item name="itemTextColor">
             @drawable/bottom_nav_colors_night
         </item>
+        <item name="android:background">
+            @color/button_text_color
+        </item>
     </style>
 
 

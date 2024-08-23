@@ -37,6 +37,7 @@ import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.search.ui.TrackScreenState
 import com.spase_y.playlistmaker05022024.search.ui.adapter.TracksAdapter
 import com.spase_y.playlistmaker05022024.search.ui.view_model.SearchViewModel
+import com.spase_y.playlistmaker05022024.utils.BottomSpaceItemDecoration
 
 
 class SearchFragment : Fragment() {
@@ -85,6 +86,8 @@ class SearchFragment : Fragment() {
 
         rvTracks.layoutManager = LinearLayoutManager(requireContext())
         rvTracks.adapter = searchTrackAdapter
+        rvTracks.addItemDecoration(BottomSpaceItemDecoration(480))
+
 
         rvHistory.layoutManager = LinearLayoutManager(requireContext())
         rvHistory.adapter = historyTrackAdapter
