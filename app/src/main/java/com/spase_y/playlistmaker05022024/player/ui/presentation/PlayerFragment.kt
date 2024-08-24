@@ -62,7 +62,7 @@ class PlayerFragment : Fragment() {
         val buttonBack = view.findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
-            (requireActivity() as MainActivity).showBottomNavigation()
+
 
         }
 
@@ -114,7 +114,7 @@ class PlayerFragment : Fragment() {
         if (currentTrackItem.collectionName.isNullOrEmpty()) {
             llAlbom.visibility = View.GONE
         } else {
-            tvAlbomName.text = truncateText(currentTrackItem.collectionName, 20)
+            tvAlbomName.text = currentTrackItem.collectionName
         }
         if (currentTrackItem.primaryGenreName.isNullOrEmpty()) {
             llGenre.visibility = View.GONE
@@ -214,13 +214,6 @@ class PlayerFragment : Fragment() {
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
 
-    private fun truncateText(text: String, maxLength: Int): String {
-        return if (text.length > maxLength) {
-            text.substring(0, maxLength) + "..."
-        } else {
-            text
-        }
-    }
 
     private var timerJob: Job? = null
 
@@ -236,6 +229,7 @@ class PlayerFragment : Fragment() {
         super.onDestroyView()
         viewModel.mdPlayerRelease()
         pauseTimerJob()
+        (requireActivity() as MainActivity).showBottomNavigation()
         Log.d("PlayerFragment", "onDestroyView: Releasing player and cancelling timer job")
     }
 }
