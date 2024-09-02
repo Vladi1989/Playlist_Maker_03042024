@@ -1,11 +1,15 @@
 package com.spase_y.playlistmaker05022024.utils
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.spase_y.playlistmaker05022024.mediateka.favorites.di.appDatabaseModule
+import com.spase_y.playlistmaker05022024.mediateka.favorites.di.favoritesModule
 import com.spase_y.playlistmaker05022024.player.di.playerDataModule
 import com.spase_y.playlistmaker05022024.player.di.playerRepositoryModule
 import com.spase_y.playlistmaker05022024.player.di.playerViewModelModule
-import com.spase_y.playlistmaker05022024.search.di.medialibraryModule
+import com.spase_y.playlistmaker05022024.mediateka.playlist.di.playlistModule
 import com.spase_y.playlistmaker05022024.search.di.searchDataModule
 import com.spase_y.playlistmaker05022024.search.di.searchRepositoryModule
 import com.spase_y.playlistmaker05022024.search.di.searchViewModelModule
@@ -24,7 +28,8 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(externalNavigatorModule,
+            modules(
+                externalNavigatorModule,
                 settingsRepositoryModule,
                 settingsViewModelModule,
                 settingsDataModule,
@@ -34,11 +39,14 @@ class App : Application() {
                 playerDataModule,
                 playerRepositoryModule,
                 playerViewModelModule,
-                medialibraryModule
+                playlistModule,
+                favoritesModule,
+                appDatabaseModule
             )
         }
         switchTheme(settingsInteractor.getThemeSettings().isDarkTheme)
     }
+
     fun switchTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
@@ -48,5 +56,16 @@ class App : Application() {
             }
         )
     }
+
+
 }
+
 const val SHARED_PREFERENCES_KEY = "SHARED_PREFERENCES_KEY"
+const val CLICK_DEBOUNCE_DELAY = 2000L
+const val SEARCH_DEBOUNCE_DELAY = 2000L
+
+
+fun isDarkTheme(context: Context): Boolean {
+    val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+}

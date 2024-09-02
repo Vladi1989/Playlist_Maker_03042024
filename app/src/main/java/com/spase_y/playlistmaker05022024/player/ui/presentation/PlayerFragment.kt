@@ -9,11 +9,23 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.main.ui.MainActivity
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTIST_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTWORK_URL_100_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COLLECTION_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COUNTRY_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PREWIEW_URL_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PRIMARY_GENRE_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.RELEASE_DATE_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_NAME_TAG
+import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_TIME_MILLIS_TAG
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import com.spase_y.playlistmaker05022024.utils.isDarkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -43,19 +55,25 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.findViewById<ScrollView>(R.id.root).setOnClickListener{
+
+        }
+        (requireActivity() as MainActivity).hideBottomNavigation()
         val buttonBack = view.findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
+
+
         }
 
-        val trackName = arguments?.getString("trackName").toString()
-        val artistName = arguments?.getString("artistName").toString()
-        val trackTimeMillis = arguments?.getLong("trackTimeMillis", 0L) ?: 0L
-        val artworkUrl100 = arguments?.getString("artworkUrl100").toString()
-        val collectionName = arguments?.getString("collectionName").toString()
-        val releaseDate = arguments?.getString("releaseDate").toString()
-        val primaryGenreName = arguments?.getString("primaryGenreName").toString()
-        val country = arguments?.getString("country").toString()
+        val trackName = arguments?.getString(TRACK_NAME_TAG).toString()
+        val artistName = arguments?.getString(ARTIST_NAME_TAG).toString()
+        val trackTimeMillis = arguments?.getLong(TRACK_TIME_MILLIS_TAG, 0L) ?: 0L
+        val artworkUrl100 = arguments?.getString(ARTWORK_URL_100_TAG).toString()
+        val collectionName = arguments?.getString(COLLECTION_NAME_TAG).toString()
+        val releaseDate = arguments?.getString(RELEASE_DATE_TAG).toString()
+        val primaryGenreName = arguments?.getString(PRIMARY_GENRE_NAME_TAG).toString()
+        val country = arguments?.getString(COUNTRY_TAG).toString()
 
         val currentTrackItem = Track(
             previewUrl, trackName, artistName, trackTimeMillis, artworkUrl100, collectionName,
@@ -75,7 +93,9 @@ class PlayerFragment : Fragment() {
         val llYear = view.findViewById<LinearLayout>(R.id.llYear)
         val llGenre = view.findViewById<LinearLayout>(R.id.llGenre)
         val llCountry = view.findViewById<LinearLayout>(R.id.llCountry)
+        val ibFavorite = view.findViewById<ImageButton>(R.id.ibFavorite)
         tvCurrentTime = view.findViewById(R.id.tvCurrentTime)
+
 
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
@@ -94,7 +114,7 @@ class PlayerFragment : Fragment() {
         if (currentTrackItem.collectionName.isNullOrEmpty()) {
             llAlbom.visibility = View.GONE
         } else {
-            tvAlbomName.text = truncateText(currentTrackItem.collectionName, 20)
+            tvAlbomName.text = currentTrackItem.collectionName
         }
         if (currentTrackItem.primaryGenreName.isNullOrEmpty()) {
             llGenre.visibility = View.GONE
@@ -117,7 +137,39 @@ class PlayerFragment : Fragment() {
                 pauseTimerJob()
             }
         }
-        viewModel.setOnCompleteListener{
+        viewModel.getIsTrackSaved().observe(viewLifecycleOwner) {
+            when (it) {
+                true -> {
+                    if(isDarkTheme(requireContext())){
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_night_on)
+                    }
+                    else {
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_day_on)
+                    }
+                }
+                false -> {
+                    if(isDarkTheme(requireContext())){
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_night_off)
+                    }
+                    else {
+                        ibFavorite.setBackgroundResource(R.drawable.favorite_day_off)
+                    }
+
+                }
+
+                null -> {}
+            }
+        }
+
+        viewModel.checkIsTrackSaved(currentTrackItem)
+        ibFavorite.setOnClickListener {
+            if (viewModel.getIsTrackSaved().value == true) {
+                viewModel.removeTrackFromFavorites(currentTrackItem)
+            } else if (viewModel.getIsTrackSaved().value == false) {
+                viewModel.addTrackToFavorites(currentTrackItem)
+            }
+        }
+        viewModel.setOnCompleteListener {
             handlePlaybackCompletion()
         }
 
@@ -132,9 +184,15 @@ class PlayerFragment : Fragment() {
                     if (isPlaybackCompleted) {
                         break
                     }
-                    val currentPosition = viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
+                    val currentPosition =
+                        viewModel.roundToNearestThousand(viewModel.getCurrentPosition()).toLong()
                     tvCurrentTime.text = viewModel.formatText(currentPosition)
-                    Log.d("PlayerFragment", "startTimerJob: Updating tvCurrentTime to ${viewModel.formatText(currentPosition)}")
+                    Log.d(
+                        "PlayerFragment",
+                        "startTimerJob: Updating tvCurrentTime to ${
+                            viewModel.formatText(currentPosition)
+                        }"
+                    )
                     delay(300)
                 }
             }
@@ -156,13 +214,6 @@ class PlayerFragment : Fragment() {
         ibPlay.setBackgroundResource(R.drawable.baseline_play_circle_24)
     }
 
-    private fun truncateText(text: String, maxLength: Int): String {
-        return if (text.length > maxLength) {
-            text.substring(0, maxLength) + "..."
-        } else {
-            text
-        }
-    }
 
     private var timerJob: Job? = null
 
@@ -178,6 +229,7 @@ class PlayerFragment : Fragment() {
         super.onDestroyView()
         viewModel.mdPlayerRelease()
         pauseTimerJob()
+        (requireActivity() as MainActivity).showBottomNavigation()
         Log.d("PlayerFragment", "onDestroyView: Releasing player and cancelling timer job")
     }
 }

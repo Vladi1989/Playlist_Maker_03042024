@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView style="@style/toolbar_style" xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -78,7 +79,7 @@
             app:layout_constraintStart_toStartOf="@+id/tvArtistName"
             app:layout_constraintTop_toTopOf="@+id/ibPlay" />
 
-        <ImageButton style="@style/button_favorite"
+        <ImageButton style="@style/button_favorite_off"
             android:id="@+id/ibFavorite"
             android:layout_width="51dp"
             android:layout_height="0dp"
@@ -153,16 +154,15 @@
                     android:textColor="@color/gray2"
                     android:textSize="13sp" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+
 
                 <TextView
                     android:id="@+id/tvAlbomName"
                     style="@style/settings_tv_style"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:gravity="end"
                     android:layout_gravity="center"
                     android:fontFamily="@font/ys_display_regular"
                     android:text="5:35"

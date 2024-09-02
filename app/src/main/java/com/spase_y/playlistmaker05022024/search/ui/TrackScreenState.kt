@@ -10,7 +10,6 @@ sealed interface TrackScreenState {
     object Empty : TrackScreenState
 
 
-
     data class History(
         val tracks: List<Track>
     ) : TrackScreenState

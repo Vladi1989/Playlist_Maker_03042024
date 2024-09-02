@@ -9,7 +9,7 @@ import com.spase_y.playlistmaker05022024.search.domain.model.RequestResult
 class SearchRepositoryImpl(
     private val localStorage: LocalStorage,
     private val networkClient: NetworkClient
-):SearchRepository {
+) : SearchRepository {
     override fun addItem(track: Track) {
         localStorage.addItem(track)
     }
@@ -29,7 +29,6 @@ class SearchRepositoryImpl(
     override suspend fun doRequest(text: String): RequestResult {
         return networkClient.doRequest(text)
     }
-
 
 
 }

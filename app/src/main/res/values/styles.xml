@@ -92,7 +92,7 @@
         <item name="android:textColor">@color/gray2</item>
     </style>
 
-    <style name="not_fond_style">
+    <style name="not_found_style">
         <item name="android:src">@drawable/not_found_day</item>
     </style>
 
@@ -106,10 +106,13 @@
     </style>
 
     <style name="button_playlist">
-        <item name ="android:background">@drawable/add_to_playlist</item>
+        <item name ="android:background">@drawable/add_to_playlist_day</item>
     </style>
-    <style name="button_favorite">
-        <item name ="android:background">@drawable/favorite</item>
+    <style name="button_favorite_off">
+        <item name ="android:background">@drawable/favorite_day_off</item>
+    </style>
+    <style name="button_favorite_on">
+        <item name ="android:background">@drawable/favorite_day_on</item>
     </style>
 
 
@@ -134,6 +137,20 @@
     <style name="toolbar_style">
         <item name="android:background">@color/white</item>
     </style>
+
+    <style name="bottom_navigation">
+        <item name="itemIconTint">
+            @drawable/bottom_nav_colors
+        </item>
+        <item name="itemTextColor">
+            @drawable/bottom_nav_colors
+        </item>
+        <item name="android:background">
+            @color/white
+        </item>
+    </style>
+
+
 
 
 </resources>

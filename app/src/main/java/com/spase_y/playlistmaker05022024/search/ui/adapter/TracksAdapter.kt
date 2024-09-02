@@ -14,7 +14,8 @@ import java.util.*
 
 class TracksAdapter : RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
 
-    class TracksViewHolder(itemView: View, val onItemClick: (Track) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    class TracksViewHolder(itemView: View, val onItemClick: (Track) -> Unit) :
+        RecyclerView.ViewHolder(itemView) {
 
         private fun truncateText(text: String, maxLength: Int): String {
             return if (text.length > maxLength) {
@@ -28,16 +29,16 @@ class TracksAdapter : RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
             val tvName = itemView.findViewById<TextView>(R.id.tvName)
             val tvDuration = itemView.findViewById<TextView>(R.id.tvDuration)
             val tvNameArtists = itemView.findViewById<TextView>(R.id.tvNameArtist)
+            tvNameArtists.text = track.artistName
             val ivLogo = itemView.findViewById<ImageView>(R.id.ivTrack)
 
             tvName.text = track.trackName
-            tvNameArtists.text = truncateText(track.artistName, 20) //
-
             itemView.setOnClickListener {
                 onItemClick.invoke(track)
             }
 
-            tvDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+            tvDuration.text =
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
             Glide.with(itemView.context)
                 .load(track.artworkUrl100)
                 .fitCenter()

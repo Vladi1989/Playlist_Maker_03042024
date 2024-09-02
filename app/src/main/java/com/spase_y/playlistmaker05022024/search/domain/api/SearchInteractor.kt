@@ -7,8 +7,8 @@ interface SearchInteractor {
     fun addItem(track: Track)
     fun deleteItem(track: Track)
     fun deleteAllItems()
-    fun getAllItems():MutableList<Track>
-    suspend fun doRequest(text:String, param: SearchConsumer)
+    fun getAllItems(): MutableList<Track>
+    suspend fun doRequest(text: String, param: SearchConsumer)
     interface SearchConsumer {
         fun consume(result: RequestResult)
     }

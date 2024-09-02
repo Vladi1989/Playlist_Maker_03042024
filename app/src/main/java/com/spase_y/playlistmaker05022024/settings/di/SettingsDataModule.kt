@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val settingsDataModule = module {
     single<SettingsInteractor> {
-       SettingsInteractorImpl(get())
+        SettingsInteractorImpl(get())
     }
     single<SharingInteractor> {
         SharingInteractorImpl(get())

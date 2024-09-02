@@ -2,9 +2,10 @@ package com.spase_y.playlistmaker05022024.main.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.spase_y.playlistmaker05022024.R
-import com.spase_y.playlistmaker05022024.mediateka.ui.presentation.MediatekaFragment
+import com.spase_y.playlistmaker05022024.mediateka.root.ui.fragment.MediatekaFragment
 import com.spase_y.playlistmaker05022024.search.ui.presentation.SearchFragment
 import com.spase_y.playlistmaker05022024.settings.ui.presentation.SettingsFragment
 
@@ -25,7 +26,8 @@ class MainActivity : AppCompatActivity() {
             ).commit()
             bottomNavigationView.selectedItemId = R.id.mediateka_fragment
         } else {
-            val selectedItemId = savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
+            val selectedItemId =
+                savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
             bottomNavigationView.selectedItemId = selectedItemId
         }
 
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
                     ).commit()
                     true
                 }
+
                 R.id.settings_fragment -> {
                     supportFragmentManager.beginTransaction().replace(
                         R.id.fragmentContainerView,
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
                     ).commit()
                     true
                 }
+
                 R.id.mediateka_fragment -> {
                     supportFragmentManager.beginTransaction().replace(
                         R.id.fragmentContainerView,
@@ -52,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     ).commit()
                     true
                 }
+
                 else -> false
             }
         }
@@ -67,4 +72,11 @@ class MainActivity : AppCompatActivity() {
         val selectedItemId = savedInstanceState.getInt("selectedItemId", R.id.mediateka_fragment)
         bottomNavigationView.selectedItemId = selectedItemId
     }
+    fun showBottomNavigation(){
+        bottomNavigationView.visibility = View.VISIBLE
+    }
+    fun hideBottomNavigation(){
+        bottomNavigationView.visibility = View.GONE
+    }
+
 }

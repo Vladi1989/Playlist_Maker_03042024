@@ -6,7 +6,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val playerRepositoryModule = module {
-    factory<PlayerRepository>{
+    factory<PlayerRepository> {
         PlayerRepositoryImpl(get())
     }
 }

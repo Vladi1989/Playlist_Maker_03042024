@@ -92,7 +92,7 @@
         <item name="android:backgroundTint">@color/white</item>
     </style>
 
-    <style name="not_fond_style">
+    <style name="not_found_style">
         <item name="android:src">@drawable/not_found_night</item>
     </style>
 
@@ -108,10 +108,13 @@
     <style name="pb_search"></style>
 
     <style name="button_playlist">
-        <item name ="android:background">@drawable/button_playlist</item>
+        <item name ="android:background">@drawable/add_to_playlist_night</item>
     </style>
-    <style name="button_favorite">
-        <item name ="android:background">@drawable/button_favorite</item>
+    <style name="button_favorite_off">
+        <item name ="android:background">@drawable/favorite_night_off</item>
+    </style>
+    <style name="button_favorite_on">
+        <item name ="android:background">@drawable/favorite_night_on</item>
     </style>
     <style name="media_library_tablelayout_style">
         <item name="android:textStyle">bold</item>
@@ -130,6 +133,17 @@
         <item name="android:background">@color/button_text_color</item>
     </style>
 
+    <style name="bottom_navigation">
+        <item name="itemIconTint">
+            @drawable/bottom_nav_colors_night
+        </item>
+        <item name="itemTextColor">
+            @drawable/bottom_nav_colors_night
+        </item>
+        <item name="android:background">
+            @color/button_text_color
+        </item>
+    </style>
 
 
 </resources>

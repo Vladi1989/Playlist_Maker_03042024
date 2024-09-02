@@ -3,7 +3,7 @@ package com.spase_y.playlistmaker05022024.player.domain.impl
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerRepository
 
-class PlayerInteractorImpl(val repository: PlayerRepository): PlayerInteractor {
+class PlayerInteractorImpl(val repository: PlayerRepository) : PlayerInteractor {
     override fun mdPlayerStart() {
         repository.mdPlayerStart()
     }
