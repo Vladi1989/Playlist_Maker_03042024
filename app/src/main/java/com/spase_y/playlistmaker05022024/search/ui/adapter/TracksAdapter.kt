@@ -17,14 +17,6 @@ class TracksAdapter : RecyclerView.Adapter<TracksAdapter.TracksViewHolder>() {
     class TracksViewHolder(itemView: View, val onItemClick: (Track) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
-        private fun truncateText(text: String, maxLength: Int): String {
-            return if (text.length > maxLength) {
-                text.substring(0, maxLength) + "..."
-            } else {
-                text
-            }
-        }
-
         fun bind(track: Track) {
             val tvName = itemView.findViewById<TextView>(R.id.tvName)
             val tvDuration = itemView.findViewById<TextView>(R.id.tvDuration)
