@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.spase_y.playlistmaker05022024.databinding.FragmentCreatePlaylistBinding
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -62,8 +64,14 @@ class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as MainActivity).hideBottomNavigation()
-        binding.buttonBack.setOnClickListener{
-            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onBack()
+
+            }
+        })
+        binding.buttonBack.setOnClickListener {
+            onBack()
         }
         binding.pickerImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -79,6 +87,39 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
+    private fun onBack() {
+        if (canShowDialog()) {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Завершить создание плейлиста?")
+            builder.setMessage("Все несохраненные данные будут потеряны")
+            builder.setPositiveButton("Завершить") { _, _ ->
+                requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+
+            }
+            builder.setNegativeButton("Отмена") { dialog, _ ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        } else {
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+
+    }
+
+    private fun canShowDialog(): Boolean {
+        if (!binding.etTextName.text.toString().isNullOrEmpty()) {
+            return true
+        } else if (!binding.etTextDescription.text.toString().isNullOrEmpty()
+        ) {
+            return true
+        } else if (!selectedImageUri.isNullOrEmpty()) {
+            return true
+        }
+        return false
+    }
+
+
     private fun setBtnDisable() {
         binding.btnCreate.setBackgroundResource(R.drawable.btn_create_bg)
         binding.btnCreate.setOnClickListener {
@@ -86,12 +127,12 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun setBtnActive(){
+    private fun setBtnActive() {
         binding.btnCreate.setBackgroundResource(R.drawable.btn_create_bg_blue)
         binding.btnCreate.setOnClickListener {
             val imageName = "saved_image_${System.currentTimeMillis()}.jpg"
             var imageUrl = ""
-            if(hasImage){
+            if (hasImage) {
                 val file = saveImageToInternalStorage(selectedImageUri, imageName)
                 imageUrl = file.absolutePath
             }
@@ -104,7 +145,7 @@ class CreatePlaylistFragment : Fragment() {
                 .findFragmentById(R.id.fragmentContainerView) as? MedialibraryPlaylistsFragment
 
             parentFragment?.showPlaylistCreatedMessage()
-
+            Toast.makeText(requireContext(), "Плейлист [$name] создан", Toast.LENGTH_SHORT).show()
             requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
         }
     }
@@ -123,10 +164,20 @@ class CreatePlaylistFragment : Fragment() {
         return file
     }
 
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).hideBottomNavigation()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (requireActivity() as MainActivity).showBottomNavigation()
+        val fragments = (requireActivity() as MainActivity).supportFragmentManager.fragments
+        if (fragments.last().javaClass.simpleName == "PlayerFragment") {
+
+        } else {
+            (requireActivity() as MainActivity).showBottomNavigation()
+        }
         _binding = null
     }
 }

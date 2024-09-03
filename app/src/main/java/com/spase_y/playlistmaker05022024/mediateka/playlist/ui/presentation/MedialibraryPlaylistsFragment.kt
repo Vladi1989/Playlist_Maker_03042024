@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.create_playlist.ui.presentation.CreatePlaylistFragment
 import com.spase_y.playlistmaker05022024.databinding.FragmentPlaylistsMedialibraryBinding
+import com.spase_y.playlistmaker05022024.main.ui.MainActivity
 import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.view_model.MedialibraryPlaylistsViewModel
 import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation.adapter.TracksPlaylistAdapter
 import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation.model.MedialibraryPlaylistScreenState
@@ -52,12 +53,19 @@ class MedialibraryPlaylistsFragment : Fragment() {
                     binding.pbLoading.visibility = View.GONE
                 }
                 is MedialibraryPlaylistScreenState.Result -> {
+                    binding.ivNotFound.visibility = View.GONE
+                    binding.tvNotFound.visibility = View.GONE
                     binding.pbLoading.visibility = View.GONE
                     adapter.playlistItems = it.list
                     adapter.notifyDataSetChanged()
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).showBottomNavigation()
     }
     fun showPlaylistCreatedMessage() {
         binding.tvPlaylistCreated.visibility = View.VISIBLE

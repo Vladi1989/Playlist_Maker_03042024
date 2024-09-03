@@ -184,13 +184,12 @@ class PlayerFragment : Fragment() {
         tvCurrentTime.text = "00:00"
         Log.d("PlayerFragment", "onViewCreated: Setting initial tvCurrentTime to 00:00")
     }
-
     private fun addTrackToPlaylist(currentTrackItem: Track) {
         val bottomSheet = BottomSheetDialog(requireContext(),R.style.BottomSheetDialogTheme)
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_layout, null)
         bottomSheet.setContentView(bottomSheetView)
 
-        // Кнопка "В корзину"
+
         val btnCreatePlaylist = bottomSheetView.findViewById<AppCompatButton>(R.id.btnCreatePlaylist)
         val rvPlaylists = bottomSheetView.findViewById<RecyclerView>(R.id.rvPlaylist)
         rvPlaylists.layoutManager = LinearLayoutManager(requireContext())

@@ -151,7 +151,7 @@
 
     <style name="base_tv_style">
         <item name="android:textColor">
-            @color/white
+            @color/button_text_color
         </item>
     </style>
 
