@@ -11,18 +11,25 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatButton
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.create_playlist.ui.presentation.CreatePlaylistFragment
 import com.spase_y.playlistmaker05022024.main.ui.MainActivity
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTIST_NAME_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.ARTWORK_URL_100_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COLLECTION_NAME_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.COUNTRY_TAG
-import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PREWIEW_URL_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.PRIMARY_GENRE_NAME_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.RELEASE_DATE_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_NAME_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_TIME_MILLIS_TAG
+import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation.adapter.LinearPlaylistAdapter
+import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation.model.MedialibraryPlaylistScreenState
 import com.spase_y.playlistmaker05022024.player.ui.view_model.PlayerViewModel
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import com.spase_y.playlistmaker05022024.utils.isDarkTheme
@@ -53,6 +60,7 @@ class PlayerFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_player, container, false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<ScrollView>(R.id.root).setOnClickListener{
@@ -62,10 +70,7 @@ class PlayerFragment : Fragment() {
         val buttonBack = view.findViewById<ImageButton>(R.id.buttonBack)
         buttonBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
-
-
         }
-
         val trackName = arguments?.getString(TRACK_NAME_TAG).toString()
         val artistName = arguments?.getString(ARTIST_NAME_TAG).toString()
         val trackTimeMillis = arguments?.getLong(TRACK_TIME_MILLIS_TAG, 0L) ?: 0L
@@ -82,6 +87,7 @@ class PlayerFragment : Fragment() {
 
         ibPlay = view.findViewById(R.id.ibPlay)
         val ivIcon = view.findViewById<ImageView>(R.id.ivIcon)
+        val ibAddToPlaylist = view.findViewById<ImageView>(R.id.ibAddToPlayList)
         val tvName = view.findViewById<TextView>(R.id.tvName)
         val tvArtist = view.findViewById<TextView>(R.id.tvArtistName)
         val tvDuration = view.findViewById<TextView>(R.id.tvDuration)
@@ -96,7 +102,9 @@ class PlayerFragment : Fragment() {
         val ibFavorite = view.findViewById<ImageButton>(R.id.ibFavorite)
         tvCurrentTime = view.findViewById(R.id.tvCurrentTime)
 
-
+        ibAddToPlaylist.setOnClickListener{
+            addTrackToPlaylist(currentTrackItem)
+        }
         tvName.text = currentTrackItem.trackName
         tvArtist.text = currentTrackItem.artistName
         tvDuration.text = viewModel.formatText(currentTrackItem.trackTimeMillis)
@@ -176,7 +184,52 @@ class PlayerFragment : Fragment() {
         tvCurrentTime.text = "00:00"
         Log.d("PlayerFragment", "onViewCreated: Setting initial tvCurrentTime to 00:00")
     }
+    private fun addTrackToPlaylist(currentTrackItem: Track) {
+        val bottomSheet = BottomSheetDialog(requireContext(),R.style.BottomSheetDialogTheme)
+        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_layout, null)
+        bottomSheet.setContentView(bottomSheetView)
 
+
+        val btnCreatePlaylist = bottomSheetView.findViewById<AppCompatButton>(R.id.btnCreatePlaylist)
+        val rvPlaylists = bottomSheetView.findViewById<RecyclerView>(R.id.rvPlaylist)
+        rvPlaylists.layoutManager = LinearLayoutManager(requireContext())
+        val playlistAdapter = LinearPlaylistAdapter()
+        rvPlaylists.adapter = playlistAdapter
+        playlistAdapter.onItemClick = {
+            if(it.trackList.contains(currentTrackItem)){
+                Toast.makeText(requireContext(), "Трек уже добавлен в плейлист [${it.playlistName}]", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.addTrackToPlaylist(currentTrackItem,it)
+                bottomSheet.dismiss()
+                Toast.makeText(requireContext(), "Добавлено в плейлист [${it.playlistName}]", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        viewModel.loadMyPlaylists()
+        viewModel.getScreenStateLD().observe(viewLifecycleOwner){
+            when(it){
+                is MedialibraryPlaylistScreenState.Loading -> {
+
+                }
+                is MedialibraryPlaylistScreenState.Empty -> {
+
+                }
+                is MedialibraryPlaylistScreenState.Result -> {
+                    playlistAdapter.playlist = it.list
+                    playlistAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+        btnCreatePlaylist.setOnClickListener {
+            bottomSheet.dismiss()
+            requireActivity().supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragmentContainerView,CreatePlaylistFragment())
+                .commit()
+        }
+        bottomSheet.show()
+    }
     fun startTimerJob() {
         timerJob =
             CoroutineScope(Dispatchers.Main).launch {

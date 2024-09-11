@@ -4,7 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import com.spase_y.playlistmaker05022024.mediateka.favorites.di.appDatabaseModule
+import com.spase_y.playlistmaker05022024.create_playlist.di.createPlaylistModule
+import com.spase_y.playlistmaker05022024.mediateka.root.di.appDatabaseModule
 import com.spase_y.playlistmaker05022024.mediateka.favorites.di.favoritesModule
 import com.spase_y.playlistmaker05022024.player.di.playerDataModule
 import com.spase_y.playlistmaker05022024.player.di.playerRepositoryModule
@@ -41,7 +42,8 @@ class App : Application() {
                 playerViewModelModule,
                 playlistModule,
                 favoritesModule,
-                appDatabaseModule
+                appDatabaseModule,
+                createPlaylistModule
             )
         }
         switchTheme(settingsInteractor.getThemeSettings().isDarkTheme)

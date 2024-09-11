@@ -6,12 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.spase_y.playlistmaker05022024.mediateka.favorites.domain.api.DataBaseInteractor
+import com.spase_y.playlistmaker05022024.mediateka.playlist.data.model.Playlist
+import com.spase_y.playlistmaker05022024.mediateka.playlist.domain.api.PlaylistInteractor
+import com.spase_y.playlistmaker05022024.mediateka.playlist.ui.presentation.model.MedialibraryPlaylistScreenState
 import com.spase_y.playlistmaker05022024.player.domain.api.FormaterInteractor
 import com.spase_y.playlistmaker05022024.player.domain.api.PlayerInteractor
 import com.spase_y.playlistmaker05022024.search.domain.model.Track
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
+    private val playlistInteractor: PlaylistInteractor,
     private val playerInteractor: PlayerInteractor,
     private val formaterInteractor: FormaterInteractor,
     private val dataBaseInteractor: DataBaseInteractor,
@@ -19,6 +23,8 @@ class PlayerViewModel(
 ) : ViewModel() {
     private var trackId = -1
     private val isTrackSaved: MutableLiveData<Boolean?> = MutableLiveData(null)
+    private val screenStateLD = MutableLiveData<MedialibraryPlaylistScreenState>()
+    fun getScreenStateLD(): LiveData<MedialibraryPlaylistScreenState> = screenStateLD
 
     init {
         playerInteractor.provideUrl(url)
@@ -28,10 +34,11 @@ class PlayerViewModel(
     fun checkIsTrackSaved(currentTrackItem: Track) {
         viewModelScope.launch {
             dataBaseInteractor.getFavoritesList().collect {
-                isTrackSaved.postValue(containsTrackIgnoringId(it,currentTrackItem))
+                isTrackSaved.postValue(containsTrackIgnoringId(it, currentTrackItem))
             }
         }
     }
+
     fun containsTrackIgnoringId(trackList: List<Track>, trackToCheck: Track): Boolean {
         var isContains = false
         trackList.forEach { track ->
@@ -43,7 +50,8 @@ class PlayerViewModel(
                 track.collectionName == trackToCheck.collectionName &&
                 track.releaseDate == trackToCheck.releaseDate &&
                 track.primaryGenreName == trackToCheck.primaryGenreName &&
-                track.country == trackToCheck.country) {
+                track.country == trackToCheck.country
+            ) {
                 trackId = track.trackId
                 isContains = true
                 return isContains
@@ -111,6 +119,29 @@ class PlayerViewModel(
         viewModelScope.launch {
             dataBaseInteractor.addTrackToFavorites(currentTrackItem)
             isTrackSaved.postValue(true)
+        }
+    }
+
+    fun loadMyPlaylists() {
+        screenStateLD.postValue(MedialibraryPlaylistScreenState.Loading)
+        viewModelScope.launch {
+            playlistInteractor.getPlaylistList().collect {
+                if (it.size == 0) {
+                    screenStateLD.postValue(MedialibraryPlaylistScreenState.Empty)
+                } else {
+                    screenStateLD.postValue(MedialibraryPlaylistScreenState.Result(it))
+                }
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(currentTrackItem: Track, it: Playlist) {
+        val newList = it.trackList.toMutableList()
+        newList.add(currentTrackItem)
+        val copyPlaylist = it.copy(trackList = newList)
+        viewModelScope.launch {
+            playlistInteractor.removePlaylist(it)
+            playlistInteractor.addPlaylist(copyPlaylist)
         }
     }
 }
