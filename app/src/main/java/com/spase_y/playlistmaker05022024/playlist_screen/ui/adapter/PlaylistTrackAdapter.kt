@@ -1,0 +1,73 @@
+package com.spase_y.playlistmaker05022024.playlist_screen.ui.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.spase_y.playlistmaker05022024.*
+import com.spase_y.playlistmaker05022024.search.domain.model.Track
+import java.text.SimpleDateFormat
+import java.util.*
+
+class PlaylistTrackAdapter : RecyclerView.Adapter<PlaylistTrackAdapter.TracksViewHolder>() {
+
+    class TracksViewHolder(
+        itemView: View,
+        val onItemClick: (Track) -> Unit,
+        val onLongItemClick: (Track) -> Unit
+    ) :
+        RecyclerView.ViewHolder(itemView) {
+
+        fun bind(track: Track) {
+            val tvName = itemView.findViewById<TextView>(R.id.tvName)
+            val tvDuration = itemView.findViewById<TextView>(R.id.tvDuration)
+            val tvNameArtists = itemView.findViewById<TextView>(R.id.tvNameArtist)
+            tvNameArtists.text = track.artistName
+            val ivLogo = itemView.findViewById<ImageView>(R.id.ivTrack)
+
+            tvName.text = track.trackName
+            itemView.setOnClickListener {
+                onItemClick.invoke(track)
+            }
+            itemView.setOnLongClickListener(object : View.OnLongClickListener{
+                override fun onLongClick(v: View?): Boolean {
+                    onLongItemClick.invoke(track)
+                    return true
+                }
+
+            })
+
+            tvDuration.text =
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+            Glide.with(itemView.context)
+                .load(track.artworkUrl100)
+                .fitCenter()
+                .error(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .into(ivLogo)
+        }
+    }
+
+    var onItemClick: (Track) -> Unit = {}
+    var onLongItemClick:(Track) -> Unit = {
+
+    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.track_item, parent, false)
+        return TracksViewHolder(view, onItemClick,onLongItemClick)
+
+    }
+
+    override fun getItemCount(): Int {
+        return listTracks.size
+    }
+
+    var listTracks = arrayListOf<Track>()
+
+    override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
+        holder.bind(listTracks[position])
+    }
+}

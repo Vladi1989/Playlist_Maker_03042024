@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.spase_y.playlistmaker05022024.create_playlist.di.createPlaylistModule
+import com.spase_y.playlistmaker05022024.edit_playlist.di.editPlaylistModule
 import com.spase_y.playlistmaker05022024.mediateka.root.di.appDatabaseModule
 import com.spase_y.playlistmaker05022024.mediateka.favorites.di.favoritesModule
 import com.spase_y.playlistmaker05022024.player.di.playerDataModule
 import com.spase_y.playlistmaker05022024.player.di.playerRepositoryModule
 import com.spase_y.playlistmaker05022024.player.di.playerViewModelModule
 import com.spase_y.playlistmaker05022024.mediateka.playlist.di.playlistModule
+import com.spase_y.playlistmaker05022024.playlist_screen.di.playlistScreenModule
 import com.spase_y.playlistmaker05022024.search.di.searchDataModule
 import com.spase_y.playlistmaker05022024.search.di.searchRepositoryModule
 import com.spase_y.playlistmaker05022024.search.di.searchViewModelModule
@@ -43,7 +45,9 @@ class App : Application() {
                 playlistModule,
                 favoritesModule,
                 appDatabaseModule,
-                createPlaylistModule
+                createPlaylistModule,
+                playlistScreenModule,
+                editPlaylistModule
             )
         }
         switchTheme(settingsInteractor.getThemeSettings().isDarkTheme)
