@@ -28,7 +28,6 @@ import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.REL
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_NAME_TAG
 import com.spase_y.playlistmaker05022024.mediateka.favorites.ui.presentation.TRACK_TIME_MILLIS_TAG
 import com.spase_y.playlistmaker05022024.mediateka.playlist.data.model.Playlist
-import com.spase_y.playlistmaker05022024.mediateka.root.ui.fragment.MediatekaFragment
 import com.spase_y.playlistmaker05022024.player.ui.presentation.PlayerFragment
 import com.spase_y.playlistmaker05022024.playlist_screen.ui.adapter.PlaylistTrackAdapter
 import com.spase_y.playlistmaker05022024.playlist_screen.ui.model.PlaylistScreenState
@@ -48,16 +47,20 @@ class PlaylistScreenFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return binding.root
     }
 
     val adapter = PlaylistTrackAdapter()
+    var _playlist: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val _playlist: String = arguments?.getString("playlist")!!
+        _playlist = arguments?.getString("playlist").toString()
+        if (_playlist == "" || _playlist == "null") {
+            return
+        }
         val playlist = gson.fromJson(_playlist, Playlist::class.java)
         playlist?.let { displayPlaylist(it) }
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
@@ -74,8 +77,10 @@ class PlaylistScreenFragment : Fragment() {
         }
 
         binding.dot3.setOnClickListener {
-            val bottomSheet = PlaylistOptionsBottomSheet(requireContext(),R.style.BottomSheetDialogTheme,vm)
-            val binding = BottomSheetPlaylistOptionsBinding.inflate(LayoutInflater.from(requireContext()))
+            val bottomSheet =
+                PlaylistOptionsBottomSheet(requireContext(), R.style.BottomSheetDialogTheme, vm)
+            val binding =
+                BottomSheetPlaylistOptionsBinding.inflate(LayoutInflater.from(requireContext()))
             bottomSheet.setContentView(binding.root)
             bottomSheet.currentPlaylist = playlist
             bottomSheet.show()
@@ -85,12 +90,12 @@ class PlaylistScreenFragment : Fragment() {
             playlist?.let { sharePlaylist(it) }
         }
 
+
         binding.rvTracks.adapter = adapter
-        if(playlist.trackList.isEmpty()){
+        if (playlist.trackList.isEmpty()) {
             binding.rvTracks.visibility = View.GONE
             binding.tvEmpty.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             binding.rvTracks.visibility = View.VISIBLE
             binding.tvEmpty.visibility = View.GONE
         }
@@ -100,14 +105,14 @@ class PlaylistScreenFragment : Fragment() {
 
         }
         adapter.onLongItemClick = {
-            showDeleteDialog(playlist,it)
+            showDeleteDialog(playlist, it)
         }
         adapter.notifyDataSetChanged()
         binding.rvTracks.layoutManager = LinearLayoutManager(requireContext())
 
 
-        vm.getScreenStateLD().observe(viewLifecycleOwner){
-            when(it){
+        vm.getScreenStateLD().observe(viewLifecycleOwner) {
+            when (it) {
                 is PlaylistScreenState.Update -> {
                     displayPlaylist(it.playlist)
                     adapter.listTracks = ArrayList(it.playlist.trackList.reversed())
@@ -117,11 +122,26 @@ class PlaylistScreenFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parentFragmentManager.setFragmentResultListener("request_key", this) { _, bundle ->
+            val result = bundle.getString("newPlaylist")
+            if (result != null) {
+                val playlist = gson.fromJson(result, Playlist::class.java)
+                displayPlaylist(playlist)
+            }
+        }
+    }
+
     private fun sharePlaylist(playlist: Playlist) {
 
         playlist.let { playlist ->
-            if(playlist.trackList.isEmpty()){
-                Toast.makeText(context, "В этом плейлисте нет списка треков, которым можно поделиться", Toast.LENGTH_SHORT).show()
+            if (playlist.trackList.isEmpty()) {
+                Toast.makeText(
+                    context,
+                    "В этом плейлисте нет списка треков, которым можно поделиться",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 val shareText = createShareText(playlist)
                 val shareIntent = Intent().apply {
@@ -157,13 +177,13 @@ class PlaylistScreenFragment : Fragment() {
         return shareTextBuilder.toString()
     }
 
-    // Форматирование времени трека в формате "мин:сек"
     private fun formatTrackDuration(trackTimeMillis: Long): String {
         val totalSeconds = trackTimeMillis / 1000
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         return String.format("%d:%02d", minutes, seconds) // Формат "мин:сек"
     }
+
 
     private fun showPlayerFragment(track: Track) {
         if (vm.clickDebounce()) {
@@ -190,14 +210,12 @@ class PlaylistScreenFragment : Fragment() {
 
 
     private fun displayPlaylist(playlist: Playlist) {
-        // Пример отображения данных плейлиста на экране
         binding.tvNamePlaylist.text = playlist.playlistName
         binding.tvDescription.text = playlist.description
         binding.tvCountOfTracks.text =
             "${playlist.trackList.size} ${getTrackWord(playlist.trackList.size)}"
 
-        // Другие данные и изображения плейлиста
-        // Например, использование Glide для загрузки изображения
+
         if (playlist.imageUrl.isNotEmpty()) {
             Glide.with(requireContext())
                 .load(playlist.imageUrl)
@@ -231,11 +249,11 @@ class PlaylistScreenFragment : Fragment() {
     private fun onBack() {
         requireActivity().supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainerView,MediatekaFragment())
+            .remove(this)
             .commit()
     }
 
-    private fun showDeleteDialog(playlist:Playlist, track: Track) {
+    private fun showDeleteDialog(playlist: Playlist, track: Track) {
         val dialog = AlertDialog.Builder(requireContext())
         dialog.setMessage("Хотите удалить трек?")
         dialog.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
@@ -259,4 +277,3 @@ class PlaylistScreenFragment : Fragment() {
         (requireActivity() as MainActivity).showBottomNavigation()
     }
 }
-

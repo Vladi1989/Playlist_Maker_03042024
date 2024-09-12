@@ -27,11 +27,10 @@
 
             <ImageView
                 android:id="@+id/placeholder"
-                android:layout_width="360dp"
-                android:layout_height="360dp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:src="@drawable/placeholder"
                 app:layout_constraintDimensionRatio="1:1"
-                android:layout_margin="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>

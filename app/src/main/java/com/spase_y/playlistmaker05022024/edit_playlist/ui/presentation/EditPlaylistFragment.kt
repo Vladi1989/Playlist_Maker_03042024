@@ -18,11 +18,13 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.spase_y.playlistmaker05022024.R
-import com.spase_y.playlistmaker05022024.databinding.FragmentEditPlaylistBinding
+import com.spase_y.playlistmaker05022024.databinding.FragmentCreatePlaylistBinding
 import com.spase_y.playlistmaker05022024.edit_playlist.ui.view_model.EditPlaylistViewModel
 import com.spase_y.playlistmaker05022024.main.ui.MainActivity
 import com.spase_y.playlistmaker05022024.mediateka.playlist.data.model.Playlist
 import com.spase_y.playlistmaker05022024.playlist_screen.ui.presentation.PlaylistScreenFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -31,20 +33,20 @@ import java.io.InputStream
 class EditPlaylistFragment : Fragment() {
     val gson = Gson()
 
-    private var selectedImageUri = "" // Переменная для нового изображения
+    private var selectedImageUri = ""
     private var hasImage = false
     private val vm: EditPlaylistViewModel by viewModel()
 
-    // Обработчик выбора изображения
+
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 hasImage = true
-                loadGlideImage(uri) // Загрузка нового изображения
+                loadGlideImage(uri)
             }
         }
 
-    private lateinit var binding: FragmentEditPlaylistBinding
+    private lateinit var binding: FragmentCreatePlaylistBinding
 
     private fun loadGlideImage(uri: Uri) {
         selectedImageUri = uri.toString()
@@ -58,8 +60,7 @@ class EditPlaylistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Здесь правильная инициализация binding
-        binding = FragmentEditPlaylistBinding.inflate(inflater, container, false)
+        binding = FragmentCreatePlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,18 +69,18 @@ class EditPlaylistFragment : Fragment() {
         (requireActivity() as MainActivity).hideBottomNavigation()
         val _playlist: String = arguments?.getString("playlist") ?: ""
         val playlist = gson.fromJson(_playlist, Playlist::class.java)
-        binding.buttonBack.setOnClickListener{
-            onBack(playlist)
+        binding.buttonBack.setOnClickListener {
+            onBack()
         }
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                onBack(playlist)
+                onBack()
 
             }
         })
-        // Изначально делаем кнопку серой и неактивной
         updateButtonState()
-
+        binding.textView.text = "Редактировать плейлист"
+        binding.btnCreate.text = "Сохранить"
         // Добавляем слушатель для поля "Название"
         binding.etTextName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -87,22 +88,18 @@ class EditPlaylistFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Обновляем состояние кнопки, когда текст изменяется
                 updateButtonState()
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // Не нужно ничего делать здесь
             }
         })
 
 
 
-        // Устанавливаем текущие данные плейлиста
         binding.etTextDescription.setText(playlist.description)
         binding.etTextName.setText(playlist.playlistName)
 
-        // Загружаем текущее изображение, если оно есть
         if (playlist.imageUrl.isNotEmpty()) {
             Glide.with(this)
                 .load(playlist.imageUrl)
@@ -110,26 +107,20 @@ class EditPlaylistFragment : Fragment() {
                 .into(binding.pickerImage)
         }
 
-        // Клик по картинке для выбора нового изображения
         binding.pickerImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        // Обработка сохранения изменений
+
         binding.btnCreate.setOnClickListener {
             saveChanges(playlist)
         }
     }
 
-    private fun onBack(playlist: Playlist) {
-        val fragment = PlaylistScreenFragment().apply {
-            arguments = Bundle().apply {
-                putString("playlist",gson.toJson(playlist))
-            }
-        }
+    private fun onBack() {
         requireActivity()
             .supportFragmentManager
-            .beginTransaction().replace(R.id.fragmentContainerView, fragment)
+            .beginTransaction().remove(this)
             .commit()
     }
 
@@ -138,7 +129,6 @@ class EditPlaylistFragment : Fragment() {
         val isNameNotEmpty = playlistName.isNotEmpty()
 
         if (isNameNotEmpty) {
-            // Если поле не пустое, делаем кнопку синей и активной
             binding.btnCreate.isEnabled = true
             binding.btnCreate.setBackgroundColor(
                 ContextCompat.getColor(
@@ -147,7 +137,6 @@ class EditPlaylistFragment : Fragment() {
                 )
             )
         } else {
-            // Если поле пустое, делаем кнопку серой и неактивной
             binding.btnCreate.isEnabled = false
             binding.btnCreate.setBackgroundColor(
                 ContextCompat.getColor(
@@ -159,7 +148,6 @@ class EditPlaylistFragment : Fragment() {
     }
 
     private fun saveChanges(playlist: Playlist) {
-        // Если была выбрана новая картинка, сохраняем её
         var imageUrl = playlist.imageUrl
         if (hasImage) {
             val imageName = "updated_image_${System.currentTimeMillis()}.jpg"
@@ -167,7 +155,6 @@ class EditPlaylistFragment : Fragment() {
             imageUrl = file.absolutePath
         }
 
-        // Обновляем плейлист с новыми данными
         val playlistName = binding.etTextName.text.toString()
         val description = binding.etTextDescription.text.toString()
         val newPlaylist = playlist.copy(
@@ -175,21 +162,23 @@ class EditPlaylistFragment : Fragment() {
             description = description,
             imageUrl = imageUrl
         )
-        vm.editPlaylist(playlist, newPlaylist)
-        Toast.makeText(requireContext(), "Изменения сохранены", Toast.LENGTH_SHORT).show()
-        openPlaylistScreen(newPlaylist)
+        vm.editPlaylist(playlist, newPlaylist){
+            Toast.makeText(requireContext(), "Изменения сохранены", Toast.LENGTH_SHORT).show()
+            openPlaylistScreen(newPlaylist)
+        }
+
     }
 
+
     fun openPlaylistScreen(playlist: Playlist) {
-        val fragment = PlaylistScreenFragment().apply {
-            arguments = Bundle().apply {
-                putString("playlist",gson.toJson(playlist))
-            }
+        val result = Bundle().apply {
+            putString("newPlaylist", gson.toJson(playlist))
         }
+        parentFragmentManager.setFragmentResult("request_key", result)
         requireActivity()
             .supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainerView, fragment)
+            .remove(this)
             .commit()
     }
 

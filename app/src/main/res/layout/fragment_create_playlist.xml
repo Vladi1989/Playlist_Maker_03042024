@@ -61,7 +61,7 @@
 
             android:id="@+id/etTextName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:lines="1"
             android:hint="Название*"
             android:textSize="16sp" />
@@ -87,27 +87,36 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etTextDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textSize="16sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnCreate"
-        android:layout_marginBottom="32dp"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:background="@drawable/btn_create_bg"
-        android:fontFamily="@font/ys_display_medium"
-        android:textColor="@color/white"
-        android:textAllCaps="false"
-        android:text="Создать"
+        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="326:44"
         app:layout_constraintEnd_toEndOf="@+id/etDescription"
-        app:layout_constraintStart_toStartOf="@+id/etDescription"
-         />
+        app:layout_constraintStart_toStartOf="@+id/etDescription">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_create_bg"
+            android:fontFamily="@font/ys_display_medium"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:text="Создать"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+
 
 
 

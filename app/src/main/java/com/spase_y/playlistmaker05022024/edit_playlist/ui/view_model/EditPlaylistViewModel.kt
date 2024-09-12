@@ -9,11 +9,13 @@ import kotlinx.coroutines.launch
 class EditPlaylistViewModel(
     private val dbInteractor: PlaylistInteractor
 ): ViewModel() {
-    fun editPlaylist(oldPlaylist: Playlist,newPlaylist: Playlist){
+    fun editPlaylist(oldPlaylist: Playlist,newPlaylist: Playlist, onResult: () -> Unit) {
         viewModelScope.launch {
             dbInteractor.removePlaylist(oldPlaylist)
             dbInteractor.addPlaylist(newPlaylist)
+            onResult.invoke()
         }
 
     }
 }
+
