@@ -10,8 +10,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.spase_y.playlistmaker05022024.R
+import com.spase_y.playlistmaker05022024.create_playlist.ui.presentation.CreatePlaylistFragment
 import com.spase_y.playlistmaker05022024.databinding.BottomSheetPlaylistOptionsBinding
-import com.spase_y.playlistmaker05022024.edit_playlist.ui.presentation.EditPlaylistFragment
 import com.spase_y.playlistmaker05022024.main.ui.MainActivity
 import com.spase_y.playlistmaker05022024.mediateka.playlist.data.model.Playlist
 import com.spase_y.playlistmaker05022024.mediateka.root.ui.fragment.MediatekaFragment
@@ -52,7 +52,7 @@ class PlaylistOptionsBottomSheet(val fragmentContext: Context, style: Int, val v
         }
 
         binding.editButton.setOnClickListener {
-            val fragment = EditPlaylistFragment()
+            val fragment = CreatePlaylistFragment()
             fragment.arguments = Bundle().apply {
                 putString("playlist",gson.toJson(currentPlaylist))
 

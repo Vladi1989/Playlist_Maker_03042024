@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.spase_y.playlistmaker05022024.create_playlist.di.createPlaylistModule
-import com.spase_y.playlistmaker05022024.edit_playlist.di.editPlaylistModule
 import com.spase_y.playlistmaker05022024.mediateka.root.di.appDatabaseModule
 import com.spase_y.playlistmaker05022024.mediateka.favorites.di.favoritesModule
 import com.spase_y.playlistmaker05022024.player.di.playerDataModule
@@ -47,7 +46,6 @@ class App : Application() {
                 appDatabaseModule,
                 createPlaylistModule,
                 playlistScreenModule,
-                editPlaylistModule
             )
         }
         switchTheme(settingsInteractor.getThemeSettings().isDarkTheme)
