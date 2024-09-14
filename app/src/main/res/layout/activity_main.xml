@@ -8,6 +8,14 @@
     tools:context=".main.ui.MainActivity">
 
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:elevation="1dp"
+        android:background="@color/gray"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:layout_width="match_parent"

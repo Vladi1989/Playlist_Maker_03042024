@@ -11,6 +11,7 @@ import com.spase_y.playlistmaker05022024.player.di.playerDataModule
 import com.spase_y.playlistmaker05022024.player.di.playerRepositoryModule
 import com.spase_y.playlistmaker05022024.player.di.playerViewModelModule
 import com.spase_y.playlistmaker05022024.mediateka.playlist.di.playlistModule
+import com.spase_y.playlistmaker05022024.playlist_screen.di.playlistScreenModule
 import com.spase_y.playlistmaker05022024.search.di.searchDataModule
 import com.spase_y.playlistmaker05022024.search.di.searchRepositoryModule
 import com.spase_y.playlistmaker05022024.search.di.searchViewModelModule
@@ -43,7 +44,8 @@ class App : Application() {
                 playlistModule,
                 favoritesModule,
                 appDatabaseModule,
-                createPlaylistModule
+                createPlaylistModule,
+                playlistScreenModule,
             )
         }
         switchTheme(settingsInteractor.getThemeSettings().isDarkTheme)

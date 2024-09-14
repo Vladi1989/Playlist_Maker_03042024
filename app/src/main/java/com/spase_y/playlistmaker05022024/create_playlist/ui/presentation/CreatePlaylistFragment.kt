@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.spase_y.playlistmaker05022024.R
 import com.spase_y.playlistmaker05022024.create_playlist.ui.view_model.CreatePlaylistViewModel
 import com.spase_y.playlistmaker05022024.main.ui.MainActivity
@@ -60,10 +61,22 @@ class CreatePlaylistFragment : Fragment() {
         _binding = FragmentCreatePlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
+    val gson = Gson()
+    val _playlist: String by lazy {
+        arguments?.getString("playlist") ?: ""
+    }
+    var playlistToEdit:Playlist? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as MainActivity).hideBottomNavigation()
+        if(_playlist != ""){
+            playlistToEdit = gson.fromJson(_playlist, Playlist::class.java)
+            binding.textView.text = "Редактировать плейлист"
+            binding.btnCreate.text = "Сохранить"
+            updateScreenState(playlistToEdit!!)
+            setBtnActive()
+        }
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 onBack()
@@ -87,8 +100,20 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
+    private fun updateScreenState(playlist: Playlist) {
+        binding.etTextDescription.setText(playlist.description)
+        binding.etTextName.setText(playlist.playlistName)
+
+        if (playlist.imageUrl.isNotEmpty()) {
+            Glide.with(this)
+                .load(playlist.imageUrl)
+                .transform(CenterCrop(), RoundedCorners(16))
+                .into(binding.pickerImage)
+        }
+    }
+
     private fun onBack() {
-        if (canShowDialog()) {
+        if (canShowDialog() && playlistToEdit == null) {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Завершить создание плейлиста?")
             builder.setMessage("Все несохраненные данные будут потеряны")
@@ -127,26 +152,64 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
+    private fun saveChanges(playlist: Playlist) {
+        var imageUrl = playlist.imageUrl
+        if (hasImage) {
+            val imageName = "updated_image_${System.currentTimeMillis()}.jpg"
+            val file = saveImageToInternalStorage(selectedImageUri, imageName)
+            imageUrl = file.absolutePath
+        }
+
+        val playlistName = binding.etTextName.text.toString()
+        val description = binding.etTextDescription.text.toString()
+        val newPlaylist = playlist.copy(
+            playlistName = playlistName,
+            description = description,
+            imageUrl = imageUrl
+        )
+        vm.editPlaylist(playlist, newPlaylist){
+            Toast.makeText(requireContext(), "Изменения сохранены", Toast.LENGTH_SHORT).show()
+            openPlaylistScreen(newPlaylist)
+        }
+    }
+    fun openPlaylistScreen(playlist: Playlist) {
+        val result = Bundle().apply {
+            putString("newPlaylist", gson.toJson(playlist))
+        }
+        parentFragmentManager.setFragmentResult("request_key", result)
+        requireActivity()
+            .supportFragmentManager
+            .beginTransaction()
+            .remove(this)
+            .commit()
+    }
+
+
     private fun setBtnActive() {
         binding.btnCreate.setBackgroundResource(R.drawable.btn_create_bg_blue)
         binding.btnCreate.setOnClickListener {
-            val imageName = "saved_image_${System.currentTimeMillis()}.jpg"
-            var imageUrl = ""
-            if (hasImage) {
-                val file = saveImageToInternalStorage(selectedImageUri, imageName)
-                imageUrl = file.absolutePath
+            if(playlistToEdit != null){
+                saveChanges(playlistToEdit!!)
+            } else {
+                val imageName = "saved_image_${System.currentTimeMillis()}.jpg"
+                var imageUrl = ""
+                if (hasImage) {
+                    val file = saveImageToInternalStorage(selectedImageUri, imageName)
+                    imageUrl = file.absolutePath
+                }
+
+                val name = binding.etTextName.text.toString()
+                val description = binding.etTextDescription.text.toString()
+                vm.addToPlaylists(Playlist(imageUrl, name, emptyList(), description))
+
+                val parentFragment = requireActivity().supportFragmentManager
+                    .findFragmentById(R.id.fragmentContainerView) as? MedialibraryPlaylistsFragment
+
+                parentFragment?.showPlaylistCreatedMessage()
+                Toast.makeText(requireContext(), "Плейлист [$name] создан", Toast.LENGTH_SHORT).show()
+                requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
             }
 
-            val name = binding.etTextName.text.toString()
-            val description = binding.etTextDescription.text.toString()
-            vm.addToPlaylists(Playlist(imageUrl, name, emptyList(), description))
-
-            val parentFragment = requireActivity().supportFragmentManager
-                .findFragmentById(R.id.fragmentContainerView) as? MedialibraryPlaylistsFragment
-
-            parentFragment?.showPlaylistCreatedMessage()
-            Toast.makeText(requireContext(), "Плейлист [$name] создан", Toast.LENGTH_SHORT).show()
-            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
         }
     }
 

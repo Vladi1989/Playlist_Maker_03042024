@@ -15,4 +15,12 @@ class CreatePlaylistViewModel(
             playlistInteractor.addPlaylist(playlist)
         }
     }
+    fun editPlaylist(oldPlaylist: Playlist,newPlaylist: Playlist, onResult: () -> Unit) {
+        viewModelScope.launch {
+            playlistInteractor.removePlaylist(oldPlaylist)
+            playlistInteractor.addPlaylist(newPlaylist)
+            onResult.invoke()
+        }
+
+    }
 }

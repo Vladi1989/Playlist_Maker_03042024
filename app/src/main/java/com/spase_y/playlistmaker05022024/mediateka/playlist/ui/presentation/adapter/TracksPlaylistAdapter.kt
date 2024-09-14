@@ -16,7 +16,7 @@ class TracksPlaylistAdapter(
 
     var playlistItems: List<Playlist> = emptyList()
 
-    class TracksPlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TracksPlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val playlistImageView: ImageView = itemView.findViewById(R.id.ivPlaylist)
         private val albumNameTextView: TextView = itemView.findViewById(R.id.tvFavotiteAlbomName)
         private val trackCountTextView: TextView = itemView.findViewById(R.id.countTracksInPlaylist)
@@ -34,6 +34,9 @@ class TracksPlaylistAdapter(
             }
             albumNameTextView.text = item.playlistName
             trackCountTextView.text = "${item.trackList.size} ${getTrackWord(item.trackList.size)}"
+            itemView.setOnClickListener{
+                onPlaylistClick(item)
+            }
         }
 
         private fun getTrackWord(count: Int): String {
@@ -60,6 +63,9 @@ class TracksPlaylistAdapter(
 
     override fun getItemCount(): Int {
         return playlistItems.size
+    }
+    var onPlaylistClick:(Playlist) -> Unit = {
+
     }
 
 }

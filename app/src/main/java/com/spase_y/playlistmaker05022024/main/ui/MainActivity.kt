@@ -12,13 +12,15 @@ import com.spase_y.playlistmaker05022024.settings.ui.presentation.SettingsFragme
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var divider: View
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
-
+        divider = findViewById(R.id.divider)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(
                 R.id.fragmentContainerView,
@@ -74,8 +76,12 @@ class MainActivity : AppCompatActivity() {
     }
     fun showBottomNavigation(){
         bottomNavigationView.visibility = View.VISIBLE
+        divider.visibility = View.VISIBLE
     }
     fun hideBottomNavigation(){
         bottomNavigationView.visibility = View.GONE
+        divider.visibility = View.GONE
+
     }
+
 }
